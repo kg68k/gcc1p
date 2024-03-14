@@ -217,7 +217,7 @@ typedef struct rtvec_def{
 #define XSTR(RTX, N)	((RTX)->fld[N].rtstr)
 #define XVEC(RTX, N)	((RTX)->fld[N].rtvec)
 #define XVECLEN(RTX, N)	((RTX)->fld[N].rtvec->num_elem)
-#define XVECEXP(RTX,N,M)((RTX)->fld[N].rtvec->elem[M].rtx)
+#define XVECEXP(RTX,N,M) ((RTX)->fld[N].rtvec->elem[M].rtx)
 
 /* ACCESS MACROS for particular fields of insns.  */
 

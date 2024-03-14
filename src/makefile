@@ -22,20 +22,20 @@
 # Variables that exist for you to override.
 # See below for how to change them for certain systems.
 
-CFLAGS = -O -cc1-stack=256000 $(ADD_FLAGS)
-#CFLAGS = -O -cc1-stack=256000 -m68020
-CC = ./gcc.x
+CFLAGS = -O2 -cc1-stack=524288 $(ADD_FLAGS)
+#CFLAGS = -O2 -cc1-stack=524288 -m68020-40
+CC = gcc2
 BISON = bison
 BISONFLAGS =
 AR = ar
 #SHELL = command
-SHELL = ksh
+SHELL = /bin/sh
 BINPREFIX =
 prefix = a:
 GCC-INCLUDE = $(gcc-include)
 TMPDIR = $(temp)
 AS-INCLUDE = $(include)
-XSHELL=ksh
+XSHELL=/bin/sh
 
 # on sysV, define this as cp.
 INSTALL = install -c
@@ -61,8 +61,9 @@ mandir = $(prefix)\doc
 manext = n
 
 # Additional system libraries to link with.
-CLIB= -lcshwild -ldos -liocs
-HCLIB= -lhupa -ldos -liocs
+#CLIB= -lcshwild -ldos -liocs
+CLIB= -lsignal -lhmem -lhdi -lttyi
+#HCLIB= -lhupa -ldos -liocs
 #CLIB= -lcshwild -ldos -liocs -lprof
 
 # Change this to a null string if obstacks are installed in the
@@ -209,7 +210,7 @@ asmcmp.x: asmcmp.c
 	$(CC) $(CFLAGS) asmcmp.c
 
 gcc.x: gcc.o version.o trapgcc.o $(LIBDEPS)
-	$(CC) $(BINPREFIX) -z-heap=8192 -z-stack=8192 -o gccnew.x gcc.o trapgcc.o version.o $(LIBS)
+	$(CC) $(BINPREFIX) -z-heap=16384 -z-stack=32768 -o $@ gcc.o trapgcc.o version.o $(LIBS)
 
 hgcc.x: hgcc.o version.o trapgcc.o $(LIBDEPS)
 	$(CC) $(BINPREFIX) -z-heap=8192 -z-stack=8192 -o hgcc.x hgcc.o trapgcc.o version.o $(HLIBS)
@@ -220,14 +221,8 @@ g++.x: g++.o version.o $(LIBDEPS)
 # Go via `gccnew' to avoid `file busy' if $(CC) is `gcc'.
 #	mv gccnew.x gcc.x
 
-cc1.x: $(C-OBJS) $(OBJS) $(LIBDEPS) main.o lastfile.o
-	echo -o cc1.x main.o lastfile.o > ind.lst
-	echo $(C-OBJS) >> ind.lst
-	echo $(OBJS) >> ind.lst
-	echo malloc.o $(LIBS) >> ind.lst
-	gcc -+-+-ind.lst
-
-#	gcc -o cc1.x main.o lastfile.o $(C-OBJS) $(OBJS) malloc.o $(LIBS)
+cc1.x: $(C-OBJS) $(OBJS) $(LIBDEPS) lastfile.o
+	$(CC) -o $@ lastfile.o $(C-OBJS) $(OBJS) $(LIBS)
 
 hcc1.x: $(C-OBJS) $(OBJS) $(LIBDEPS)
 	echo -o hcc1.x  > ind.lst
@@ -420,7 +415,9 @@ s-codes: md cmp.x
 insn-emit.o : insn-emit.c $(CONFIG-H) $(RTL-H) expr.h real.h insn-codes.h \
   insn-config.h insn-flags.h asmcmp.x
 	$(CC) $(BINPREFIX) $(CFLAGS) $(INCLUDES) -S insn-emit.c -o temp.s
+	-@060high 0
 	./asmcmp.x _gen_nop: temp.s tmp0.s
+	-@060high 1
 	$(CC) tmp0.s -c -o insn-emit.o
 	rm tmp0.s temp.s
 
@@ -441,7 +438,9 @@ s-recog: md cmp.x
 
 insn-extract.o : insn-extract.c $(CONFIG-H) $(RTL-H) asmcmp.x
 	$(CC) $(BINPREFIX) $(CFLAGS) $(INCLUDES) -S insn-extract.c -o temp.s
+	-@060high 0
 	./asmcmp.x _insn_extract_fn: temp.s  tmp.s
+	-@060high 1
 	$(CC) tmp.s -c -o insn-extract.o
 	rm tmp.s temp.s
 
@@ -478,45 +477,45 @@ insn.o: insn.c
 # about the target machine.  They do depend on config.h itself,
 # since that describes the host machine.
 #
-#genconfig.x : genconfig.o rtl.o $(LIBDEPS)
-#	$(CC) $(BINPREFIX) -o genconfig.x genconfig.o rtl.o $(LIBS)
-#
-#genconfig.o : genconfig.c $(RTL-H) config.h
-#
-#genflags.x : genflags.o rtl.o $(LIBDEPS)
-#	$(CC) $(BINPREFIX) -o genflags.x genflags.o rtl.o $(LIBS)
-#
-#genflags.o : genflags.c $(RTL-H) config.h
-#
-#gencodes.x : gencodes.o rtl.o $(LIBDEPS)
-#	$(CC) $(BINPREFIX) -o gencodes.x gencodes.o rtl.o $(LIBS)
-#
-#gencodes.o : gencodes.c $(RTL-H) config.h
-#
-#genemit.x : genemit.o rtl.o $(LIBDEPS)
-#	$(CC) $(BINPREFIX) -o genemit.x genemit.o rtl.o $(LIBS)
-#
-#genemit.o : genemit.c $(RTL-H) config.h
-#
-#genrecog.x : genrecog.o rtl.o $(LIBDEPS)
-#	$(CC) $(BINPREFIX) -o genrecog.x genrecog.o rtl.o $(LIBS)
-#
-#genrecog.o : genrecog.c $(RTL-H) config.h
-#
-#genextract.x : genextract.o rtl.o $(LIBDEPS)
-#	$(CC) $(BINPREFIX) -o genextract.x genextract.o rtl.o $(LIBS)
-#
-#genextract.o : genextract.c $(RTL-H) config.h
-#
-#genpeep.x : genpeep.o rtl.o $(LIBDEPS)
-#	$(CC) $(BINPREFIX) -o genpeep.x genpeep.o rtl.o $(LIBS)
-#
-#genpeep.o : genpeep.c $(RTL-H) config.h
-#
-#genoutput.x : genoutput.o rtl.o $(LIBDEPS)
-#	$(CC) $(BINPREFIX)  -o genoutput.x genoutput.o rtl.o $(LIBS)
-#
-#genoutput.o : genoutput.c $(RTL-H) config.h
+genconfig.x : genconfig.o rtl.o $(LIBDEPS)
+	$(CC) $(BINPREFIX) -o genconfig.x genconfig.o rtl.o $(LIBS)
+
+genconfig.o : genconfig.c $(RTL-H) config.h
+
+genflags.x : genflags.o rtl.o $(LIBDEPS)
+	$(CC) $(BINPREFIX) -o genflags.x genflags.o rtl.o $(LIBS)
+
+genflags.o : genflags.c $(RTL-H) config.h
+
+gencodes.x : gencodes.o rtl.o $(LIBDEPS)
+	$(CC) $(BINPREFIX) -o gencodes.x gencodes.o rtl.o $(LIBS)
+
+gencodes.o : gencodes.c $(RTL-H) config.h
+
+genemit.x : genemit.o rtl.o $(LIBDEPS)
+	$(CC) $(BINPREFIX) -o genemit.x genemit.o rtl.o $(LIBS)
+
+genemit.o : genemit.c $(RTL-H) config.h
+
+genrecog.x : genrecog.o rtl.o $(LIBDEPS)
+	$(CC) $(BINPREFIX) -o genrecog.x genrecog.o rtl.o $(LIBS)
+
+genrecog.o : genrecog.c $(RTL-H) config.h
+
+genextract.x : genextract.o rtl.o $(LIBDEPS)
+	$(CC) $(BINPREFIX) -o genextract.x genextract.o rtl.o $(LIBS)
+
+genextract.o : genextract.c $(RTL-H) config.h
+
+genpeep.x : genpeep.o rtl.o $(LIBDEPS)
+	$(CC) $(BINPREFIX) -o genpeep.x genpeep.o rtl.o $(LIBS)
+
+genpeep.o : genpeep.c $(RTL-H) config.h
+
+genoutput.x : genoutput.o rtl.o $(LIBDEPS)
+	$(CC) $(BINPREFIX)  -o genoutput.x genoutput.o rtl.o $(LIBS)
+
+genoutput.o : genoutput.c $(RTL-H) config.h
 
 # Making the preprocessor
 cpp.x: cccp.o cexp.o version.o trap.o $(LIBDEPS)

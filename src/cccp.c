@@ -53,15 +53,15 @@ typedef unsigned char U_CHAR;
 #undef bzero
 #undef bcmp
 
+#include <sys/stat.h>
 #ifndef __human68k__
 #include <sys/types.h>
-#include <sys/stat.h>
 #else /* __human68k__ */
+#define __DOS_INLINE__
+#include <sys/dos.h>
 #ifdef HUMAN68K_ON_BSD_DEBUG /* DEBUG */
 #include <sys/types.h>
-#include <sys/stat.h>
 #else /* REAL __human68k__ */
-#include <stat.h>
 #undef  S_IFMT
 #define S_IFMT	0xf0
 #endif /* DEBUG */
@@ -632,14 +632,14 @@ main (argc, argv)
   }
 #endif /* RLIMIT_STACK defined */
 #ifdef __human68k__
-#ifndef HUMAN68K_ON_BSD_DEBUG
+#if !defined (HUMAN68K_ON_BSD_DEBUG) && !defined (__LIBC__)
   allmem();
 #endif /* not DEBUG */
   {
     extern (*trap_14)();
     extern trap14();
     extern abort();
-    char *env = getenv ("GCC_OPTION");
+    char *env = getenv ("GCC_OPTION1");
     fmt_error ="%s: %5d: Error :";
     fmt_warn  ="%s: %5d:";
     if (env)
@@ -656,10 +656,10 @@ main (argc, argv)
 	    gcc_err_file = stdout;
           env ++;
         }
-    trap_14 = (void *)INTVCG (0x2e);
-    INTVCS (0x2e,trap14);
-    INTVCS (0xfff2,abort);
-    INTVCS (0xfff1,abort);
+    trap_14 = (void *)_dos_intvcg (0x2e);
+    _dos_intvcs (0x2e,trap14);
+    _dos_intvcs (0xfff2,abort);
+    _dos_intvcs (0xfff1,abort);
     human68k_setpath(include_defaults);
     human68k_setpath(cplusplus_include_defaults);
   }
@@ -984,7 +984,7 @@ main (argc, argv)
   no_output++;
   for (i = 1; i < argc; i++)
     if (pend_files[i]) {
-      int fd = open (pend_files[i], O_RDONLY, 0666);
+      int fd = open (pend_files[i], O_RDONLY | O_TEXT, 0666);
       if (fd < 0) {
 	perror_with_name (pend_files[i]);
 	return FATAL_EXIT_CODE;
@@ -1002,7 +1002,7 @@ main (argc, argv)
   if (in_fname == NULL || *in_fname == 0) {
     in_fname = "";
     f = 0;
-  } else if ((f = open (in_fname, O_RDONLY, 0666)) < 0)
+  } else if ((f = open (in_fname, O_RDONLY | O_TEXT, 0666)) < 0)
     goto perror;
 
   /* Either of two environment variables can specify output of deps.
@@ -2717,8 +2717,10 @@ get_filename:
     while (fend != limit && *fend != '\"')
 #ifdef __human68k__
       {
+#ifdef SLASH_CONV
 	if (*fend == '/')
 	  *fend = '\\';
+#endif
 	fend++;
       }
 #else
@@ -2781,8 +2783,10 @@ get_filename:
     fend = fbeg;
 #ifdef __human68k__
     while (fend != limit && *fend != '>') {
+#ifdef SLASH_CONV
       if (*fend == '/')
 	*fend = '\\';
+#endif
       fend++;
     }
 #else
@@ -2826,7 +2830,7 @@ get_filename:
 #endif
     strncpy (fname, fbeg, flen);
     fname[flen] = 0;
-    f = open (fname, O_RDONLY, 0666);
+    f = open (fname, O_RDONLY | O_TEXT, 0666);
   } else {
     /* Search directory path, trying to open the file.
        Copy each filename tried into FNAME.  */
@@ -2856,7 +2860,7 @@ get_filename:
 	fname[flen] = 0;
       }
 #endif /* VMS */
-      if ((f = open (fname, O_RDONLY, 0666)) >= 0)
+      if ((f = open (fname, O_RDONLY | O_TEXT, 0666)) >= 0)
 	break;
     }
   }
@@ -5095,11 +5099,17 @@ static void
 tag_file_open()
 {
  char *temp_dir = getenv ("TEMP");
+#ifdef FUNNY_ENV
  char *mariko = getenv ("真里子");
+#else
+ char *mariko = getenv ("GCC_OPTION0");
+#endif
  if (!temp_dir && !(temp_dir = getenv ("temp")))
    temp_dir = "";
+#ifdef FUNNY_ENV
  if (!mariko)
    mariko = getenv ("MARIKO");
+#endif
  if (mariko)
    {
      for (;*mariko;mariko ++)
@@ -5116,7 +5126,7 @@ tag_file_open()
                *p++ = '\\';
                *p   = '\0';
              }
-           strcat (name, "mariko.err");
+           strcat (name, "gcc.err");
            tagfile = fopen (name, "w");
            break;
          }
@@ -5784,6 +5794,7 @@ deps_output (string, size)
 #ifndef BSD
 #ifndef BSTRING
 
+#ifndef __LIBC__
 void
 bzero (b, length)
      register char *b;
@@ -5826,6 +5837,7 @@ bcopy (b1, b2, length)
     *b2++ = *b1++;
 #endif /* not VMS */
 }
+#endif
 
 int
 bcmp (b1, b2, length)	/* This could be a macro! */
@@ -6128,49 +6140,52 @@ fix_read_buf (buf, count)
      U_CHAR *buf;
      int count;
 {
-  while (count --)
+  while (--count >= 0)
     {
-      if (iskanji (*buf))
+      U_CHAR high = *buf++;
+      if (iskanji (high))
         {
-          buf ++;
+	  U_CHAR low = *buf++;
           count --;
-          switch (*buf)
+          switch (low)
             {
             case '@':
-              *buf = '0';
+	      *--buf = '0';
               break;
             case '[':
-              *buf = '1';
+	      *--buf = '1';
               break;
             case '\\':
-              *buf = '2';
+	      *--buf = '2';
               break;
             case ']':
-              *buf = '3';
+	      *--buf = '3';
               break;
             case '^':
-              *buf = '4';
+	      *--buf = '4';
               break;
             case '`':
-              *buf = '5';
+	      *--buf = '5';
               break;
             case '{':
-              *buf = '6';
+	      *--buf = '6';
               break;
             case '|':
-              *buf = '7';
+	      *--buf = '7';
               break;
             case '}':
-              *buf = '8';
+	      *--buf = '8';
               break;
             case '~':
-              *buf = '9';
+	      *--buf = '9';
               break;
             default:
-              break;
+	      continue;
             }
+	  if (high == 0x80 || (0xf0 <= high && high <= 0xf3))
+	    *buf += 0x80 - '0';
+	  buf ++;
         }
-        buf ++;
     }
 }
 
@@ -6179,49 +6194,23 @@ fix_write_buf (buf, count)
      U_CHAR *buf;
      int count;
 {
-  while (count --)
+  while (--count >= 0)
     {
-      if (iskanji (*buf))
+      U_CHAR high = *buf++;
+      if (iskanji (high))
         {
-          buf ++;
+	  static const U_CHAR tbl[] =
+			{ '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~' };
+	  U_CHAR low = *buf++;
           count --;
-          switch (*buf)
-            {
-            case '0':
-              *buf = '@';
-              break;
-            case '1':
-              *buf = '[';
-              break;
-            case '2':
-              *buf = '\\';
-              break;
-            case '3':
-              *buf = ']';
-              break;
-            case '4':
-              *buf = '^';
-              break;
-            case '5':
-              *buf = '`';
-              break;
-            case '6':
-              *buf = '{';
-              break;
-            case '7':
-              *buf = '|';
-              break;
-            case '8':
-              *buf = '}';
-              break;
-            case '9':
-              *buf = '~';
-              break;
-            default:
-              break;
-            }
+	  if (high == 0x80 || (0xf0 <= high && high <= 0xf3))
+	    {
+	      if (0x80 <= low && low <= 0x89)
+		buf[-1] = tbl[low & 0x0f];
+	    }
+	  else if ('0' <= low && low <= '9')
+	    buf[-1] = tbl[low & 0x0f];
         }
-        buf ++;
     }
 }
 
@@ -6253,7 +6242,11 @@ human68k_setpath(d)
       if (s = human68k_getenv(d->fname+1)) {
 	x = (unsigned char *)(d->fname = xmalloc(strlen(s)+1));
 	while(c = *s++)
+#ifdef SLASH_CONV
 	  *x++ = (c == '/') ? '\\' : c;
+#else
+	  *x++ = c;
+#endif
 	*x = 0;
       }
       else

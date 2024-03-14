@@ -23,6 +23,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 /* system include */
 #include <stdio.h>
+#ifdef __HUMAN68K__
+#define __DOS_INLINE__
+#include <sys/dos.h>
+#endif
 #ifndef NO_CPP
 #include <interrupt.h>
 
@@ -120,12 +124,11 @@ output_debug_info ()
   fprintf (stderr, "Processing %s\n", current_process);
 }
 #endif
-extern INTVCS();
 
 abort(int dummy)
 {
   int asm_ok = 0;
-  INTVCS(0x2e,trap_14);
+  _dos_intvcs(0x2e,trap_14);
 #ifndef NO_CC1
   if (current_function_decl)
     {

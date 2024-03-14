@@ -29,8 +29,12 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include <stdlib.h>
 #include <signal.h>
 #include <setjmp.h>
+#include <sys/stat.h>
 #ifdef __human68k__
-#include <stat.h>
+#define __DOS_INLINE__
+#define __IOCS_INLINE__
+#include <sys/dos.h>
+#include <sys/iocs.h>
 #define SDB_DEBUGGING_INFO
 #if 0
 #undef stderr
@@ -38,7 +42,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #endif
 #else
 #include <sys/types.h>
-#include <sys/stat.h>
 #endif /* __human68k__ */
 
 #ifdef USG
@@ -580,7 +583,7 @@ gettime ()
     return 0;
 
 #ifdef __human68k__
-  return ONTIME ()* 10000;
+  return _iocs_ontime ()* 10000;
 #else
 #ifdef USG
   times (&tms);
@@ -858,7 +861,7 @@ mariko_err_func ()
 	      *env++ = '\\';
 	      *env = '\0';
 	    }
-	  strcat (p, "mariko.err");
+	  strcat (p, "gcc.err");
 	  if (fp = fopen (p, "w"))
 	    mariko_err_file = fp;
 	}
@@ -1338,7 +1341,7 @@ compile_file (name)
     }
   else
 #ifdef NO_BINARY_INPUT
-    finput = fopen (name, "r");
+    finput = fopen (name, "rt");
 #else
     finput = fopen (name, "rb");
 #endif
@@ -1526,7 +1529,9 @@ compile_file (name)
   ASM_FILE_START (asm_out_file);
 
 #ifdef __human68k__
-  fprintf (asm_out_file, "RUNS_HUMAN_VERSION\tequ\t%d\n", (VERNUM () & 0xff00) >> 8);
+#if 0
+  fprintf (asm_out_file, "RUNS_HUMAN_VERSION\tequ\t%d\n", (_dos_vernum () & 0xff00) >> 8);
+#endif
   if (TARGET_68040)
     fprintf (asm_out_file, "\t.cpu 68040\n");
   else if (TARGET_68020)
@@ -2349,9 +2354,13 @@ exit_rest_of_compilation:
 static void 
 ___mari ()
 {
+#ifdef FUNNY_ENV
   char *env = getenv ("真里子");
   if (!env)
     env = getenv ("MARIKO");
+#else
+  char *env = getenv ("GCC_OPTION0");
+#endif
   if (env)
     while (*env)
       {
@@ -2463,11 +2472,11 @@ undump_data (name)
     int *MALLOCP;
   } check_buf;
 
-  fno = OPEN (name, 0x0);
+  fno = _dos_open (name, 0x0);
   if (fno < 0)
     fatal_io_error ("dumpファイルがありません\n");
 
-  READ (fno, &check_buf, sizeof (struct INF));
+  _dos_read (fno, &check_buf, sizeof (struct INF));
 
   if (check_buf.PEND == (int *)-1
       && check_buf.DSTA == (int *)-1
@@ -2482,11 +2491,11 @@ undump_data (name)
 	   || check_buf.HSTA != _HSTA)
     fatal_io_error ("dumpアドレスがずれています\n");
 
-  READ (fno, &size, sizeof (int));
+  _dos_read (fno, &size, sizeof (int));
   if ((int) &my_edata + size > (int) _SSTA)
     fatal_io_error ("Stackが重なります\n");
 
-  if (READ (fno, &my_edata, size) != size)
+  if (_dos_read (fno, &my_edata, size) != size)
     abort ();
   if (reloc)
     {
@@ -2499,7 +2508,7 @@ undump_data (name)
       do
 	{
 	  short *val = buf;
-	  num = READ (fno, buf, 8192 * sizeof (short));
+	  num = _dos_read (fno, buf, 8192 * sizeof (short));
 	  num /= sizeof (short);
 	  for (i = 0; i < num; i++)
 	    {
@@ -2518,14 +2527,14 @@ undump_data (name)
 	}
       while (num != 0);
     }
-  CLOSE (fno);
+  _dos_close< (fno);
   readdump = 1;
 }
 
 static void
 x68_getenv ()
 {
-  char *env = (char *) getenv ("GCC_OPTION");
+  char *env = (char *) getenv ("GCC_OPTION1");
   int i;
   if (env)
     {
@@ -2533,8 +2542,13 @@ x68_getenv ()
 	{
 	  switch (*env)
 	    {
+#if 0
 	      extern short gram_uok;
 	      extern short tram_uok;
+#else
+	      short gram_uok;
+	      short tram_uok;
+#endif
 	    case 'L':
 	      flag_strength_reduce = 1;
 	      break;
@@ -2598,14 +2612,16 @@ main (argc, argv, envp)
   int arg_error = 0;
 
 #ifdef __human68k__
+#ifndef __LIBC__
   allmem ();
+#endif
   {
     extern (*trap_14) ();
     extern trap14 ();
-    trap_14 = (void *) INTVCG (0x2e);
-    INTVCS (0x2e, trap14);
-    INTVCS (0xfff2, abort);
-    INTVCS (0xfff1, abort);
+    trap_14 = (void *) _dos_intvcg (0x2e);
+    _dos_intvcs (0x2e, trap14);
+    _dos_intvcs (0xfff2, abort);
+    _dos_intvcs (0xfff1, abort);
   }
 dump_redo:
   if (!readdump)

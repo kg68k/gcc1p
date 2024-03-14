@@ -915,6 +915,8 @@ combine_movables (movables, nregs)
 #ifndef __human68k__
   for (m = movables; m; m = m->next)
 #else
+  if (total_exec > 0)
+    message ("\r""\x1b""[K");
   for (m = movables; m; m = m->next,--exec_num)
 #endif
     if (m->match == 0 && n_times_used[m->regno] == 1 && !m->partial)
@@ -925,7 +927,7 @@ combine_movables (movables, nregs)
 	bzero (matched_regs, nregs);
 #ifdef __human68k__
 	if (exec_num > 0)
-	  message ("loop最適化処理0 残数 %5d\r",exec_num);
+	  message ("loop最適化処理0 残数 %5d\r""\x1b""1",exec_num);
 #endif
 	matched_regs[regno] = 1;
 
@@ -1011,7 +1013,7 @@ combine_movables (movables, nregs)
       }
 #else
   if (total_exec > 0)
-    message ("\r""\x1b""[K""\x1b""1");
+    message ("\r""\x1b""[K""\x1b""1""\x1b""1");
 #endif
 }
 
@@ -1170,6 +1172,8 @@ move_movables (movables, threshold, insn_count, loop_start, end, nregs)
 #ifndef __human68k__
   for (m = movables; m; m = m->next)
 #else
+  if (total_exec > 0)
+    message ("\r""\x1b""[K");
   for (m = movables; m; m = m->next,--exec_num)
 #endif
     {
@@ -1198,7 +1202,7 @@ move_movables (movables, threshold, insn_count, loop_start, end, nregs)
 	}
 #else
       if (exec_num > 0)
-        message ("loop最適化処理1 残数 %5d\r",exec_num);
+        message ("loop最適化処理1 残数 %5d\r""\x1b""1",exec_num);
 #endif
       /* Count movables.  Value used in heuristics in strength_reduce.  */
       num_movables++;
@@ -1492,7 +1496,7 @@ move_movables (movables, threshold, insn_count, loop_start, end, nregs)
 
 #ifdef __human68k__
   if (total_exec > 0)
-    message ("\r""\x1b""[K""\x1b""1");
+    message ("\r""\x1b""[K""\x1b""1""\x1b""1");
 #endif
 }
 

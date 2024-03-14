@@ -57,6 +57,8 @@
 #include <setjmp.h>
 #include <ctype.h>
 #include <error.h>
+#define __DOS_INLINE__
+#include <sys/dos.h>
 #else
 #include <errno.h>
 #endif
@@ -2649,8 +2651,8 @@ combine_strings (strings)
 	      int i;
 	      char *tem = q;
 	      for (i = 0; i < len; i++) {
-	      	if (iskanji ((unsigned int)TREE_STRING_POINTER (t)[i]) &&
-	      	    iskanji2 ((unsigned int)TREE_STRING_POINTER (t)[i+1]))
+	      	if (iskanji ((unsigned char)TREE_STRING_POINTER (t)[i]) &&
+	      	    iskanji2 ((unsigned char)TREE_STRING_POINTER (t)[i+1]))
 	      	  {
 	      	    *tem++ = 0;
 	      	    *tem++ = 0;
@@ -3273,23 +3275,23 @@ void dump_data()
 
   printf("Write total size = %d\n", size = (int)end_of_heap - (int)&my_edata);
 
-  new = CREATE (dump_file_name, 0x20);
+  new = _dos_create (dump_file_name, 0x20);
 
   if (new <0)
     {
       error ("Dumpファイルを作れません %s", dump_file_name);
       return;
     }
-  data_size  = WRITE (new, (void *)inf_ptr, sizeof (struct INF));
-  data_size += WRITE (new, (void *)& size, sizeof (int));
-  data_size += WRITE (new, (void *)&my_edata, (int)end_of_heap - (int)&my_edata);
+  data_size  = _dos_write (new, (void *)inf_ptr, sizeof (struct INF));
+  data_size += _dos_write (new, (void *)& size, sizeof (int));
+  data_size += _dos_write (new, (void *)&my_edata, (int)end_of_heap - (int)&my_edata);
   if (data_size != (int)end_of_heap - (int)&my_edata + sizeof (struct INF) + sizeof(int))
     {
       error ("Dumpファイル書出しに失敗しました");
-      CLOSE (new);
+      _dos_close (new);
       return;
     }
-  CLOSE (new);
+  _dos_close (new);
   abort ();
 }
 

@@ -3831,6 +3831,10 @@ cse_main (f, nregs)
      Compute the maximum number of qty's needed for each basic block
      (which is 2 for each SET).  */
   insn = f;
+#ifdef __human68k__
+  if (MARIKO_F)
+    message ("\r""\x1b""[K");
+#endif
   while (insn)
     {
       struct cse_basic_block_data val;
@@ -3843,7 +3847,7 @@ cse_main (f, nregs)
 
 #ifdef __human68k__
       if (MARIKO_F)
-        message ("共通部分式削除 Start %d end %d\r",
+        message ("共通部分式削除 Start %d end %d\r""\x1b""1",
                   cse_basic_block_start,
                   cse_basic_block_end);
 #endif
@@ -3861,7 +3865,7 @@ cse_main (f, nregs)
     }
 #ifdef __human68k__
     if (MARIKO_F)
-      message ("\r""\x1b""[K""\x1b""1");
+      message ("\r""\x1b""[K""\x1b""1""\x1b""1");
 #endif
 
   /* Tell refers_to_mem_p that qty_const info is not available.  */

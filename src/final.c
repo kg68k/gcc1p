@@ -621,7 +621,7 @@ final (first, file, write_symbols, optimize, prescan)
 			    prescan, 0);
 #ifdef __human68k__
   if (MARIKO_F)
-    message ("\r""\x1b""[K""\x1b""1");
+    message ("\r""\x1b""[K""\x1b""1""\x1b""1");
 #endif
 }
 

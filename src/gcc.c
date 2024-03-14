@@ -141,13 +141,16 @@ gcc handles options '-cpp-stack=N', '-cc1-stack=N' are available.
 */
 
 #include <stdio.h>
+#include <string.h>
 #ifdef __human68k__
+#include <errno.h>
 #include <stdlib.h>
-#include <stat.h>
+#include <sys/stat.h>
 #include <signal.h>
 #include <process.h>
-#include <doslib.h>
-#include <jfctype.h>
+#define __DOS_INLINE__
+#include <sys/dos.h>
+#include <jctype.h>
 #undef stderr
 #define stderr stdout
 #else
@@ -327,7 +330,7 @@ struct compiler
 struct compiler compilers[] =
 {
   {".c",
-   "gcc_cpp.x %{cpp-stack=*:-+-s:%XP} %{!cpp-stack=*:-+-s:%XP}\
+   "gcc_cpp %{cpp-stack=*:-+-s:%XP} %{!cpp-stack=*:-+-s:%XP}\
  %{nostdinc} %{C} %{v} %{D*} %{U*} %{I*} %{M*} %{T} %{trigraphs} -undef\
  -D__GNUC__ %{ansi:-trigraphs -$ -D__STRICT_ANSI__} %{!ansi:%p} %P\
  %c %{O*:-D__OPTIMIZE__} %{traditional} %{pedantic} %{m68881:-D__HAVE68881__}\
@@ -335,22 +338,22 @@ struct compiler compilers[] =
  %{m68040:-D__MC68040__}\
  %{Wcomment} %{Wtrigraphs} %{Wall} %C %{fundump*} %{SX: -DSX_GCC -D__SX_GCC__}\
  %i %{!M*:%{!E:%{!C:%g.cpp}}}%{C:%{o*}}%{E:%{o*}}%{M*:%{o*}} |\n\
- %{!M*:%{!E:%{!C:gcc_cc1.x %{cc1-stack=*:-+-s:%X1} %{!cc1-stack=*:-+-s:%X1}\
+ %{!M*:%{!E:%{!C:gcc_cc1 %{cc1-stack=*:-+-s:%X1} %{!cc1-stack=*:-+-s:%X1}\
  %g.cpp %1 %{!Q:-quiet} -dumpbase %i %{Y*} %{d*} %{m*} %{f*} %{a}\
  %{g} %{O*} %{W*} %{w} %{p} %{pedantic} %{ansi} %{traditional} %{!SX:-fhuman}\
  %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}\
  %{!S:%{!ffppp:-o %g.s}%{ffppp:-o %g.ss}}}}} |\n\
- %{!M*:%{!E:%{!S:%{ffppp:fppp.x -o %g.s %g.ss}}}} |\n\
- %{!M*:%{!E:%{!S:has.x %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s\
+ %{!M*:%{!E:%{!S:%{ffppp:fppp -o %g.s %g.ss}}}} |\n\
+ %{!M*:%{!E:%{!S:has %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s\
  %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n}}}"},
   {".i",
-"gcc_cc1.x %{cc1-stack=*:-+-s:%X1} %{!cc1-stack=*:-+-s:%X1}\
+"gcc_cc1 %{cc1-stack=*:-+-s:%X1} %{!cc1-stack=*:-+-s:%X1}\
 %i %1 %{!Q:-quiet} %{Y*} %{d*} %{m*} %{f*} %{a}\
 %{g} %{O*} %{W*} %{w} %{p} %{pedantic} %{ansi} %{traditional}\
 %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}%{!S:-o %g.s} |\n\
-%{!S:has.x %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
+%{!S:has %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
 {".s",
- "%{!S:has.x %a %{SX: -r} %{as-symbols=*:/m %XS} %i %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
+ "%{!S:has %a %{SX: -r} %{as-symbols=*:/m %XS} %i %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
   /* Mark end of table */
   {0, 0}
 };
@@ -1038,8 +1041,11 @@ execute ()
 #ifdef __human68k__
       extern int spawnv (), spawnvp ();
       char *string = commands[i].argv[0];
-      char *s, *p, **a, *v[128], indirect_file_buf[256], *indirect_file_p;
+      char *s, *p, **a, *v[128];
+#ifndef __LIBC__
+      char indirect_file_buf[256], *indirect_file_p;
       int program_is_cash = 0;
+#endif
       int program_is_cc1=0;
       int program_is_as =0;
       FILE *fp;
@@ -1047,17 +1053,21 @@ execute ()
       for (p = s = commands[i].argv[0]; *s; s++)
 	if (*s == '/' || *s == '\\')
 	  {
+#ifdef SLASH_CONV
 	    *s = '\\';
+#endif
 	    p = s+1;
 	  }
-      if (strcmp (p, "gcc_cc1.x") == 0
-          || strcmp (p, "gcc_cpp.x") == 0)
+      if (strcmp (p, "gcc_cc1") == 0
+          || strcmp (p, "gcc_cpp") == 0)
 	program_is_cc1 = 1;
-      if (strcmp (p, "has.x") == 0)
+      if (strcmp (p, "has") == 0)
 	program_is_as = 1;
-      if (strcmp (p, getenv ("GCC_LINK")!=0 ? getenv ("GCC_LINK"): "lk.x") == 0)
+      if (strcmp (p, getenv ("GCC_LINK")!=0 ? getenv ("GCC_LINK"): "hlk") == 0)
 	{
+#ifndef __LIBC__
 	  program_is_cash = 1;
+#endif
 	  no_delete_temp = 1;
 	  for (a = commands[i].argv+1; *a; a++)
 	    {
@@ -1074,7 +1084,11 @@ execute ()
 	}
       for (a = commands[i].argv, j = -1; *a;)
 	{
+#if defined(__human68k__) && !defined(__LIBC__)
 	  j += strlen(s = *a++) + 1;
+#else
+	  s = *a++;
+#endif
 	  if (vflag)
 	    {
 	      fprintf (stdout, "%s", s);
@@ -1087,6 +1101,7 @@ execute ()
 	  fprintf (stdout, "\n");
 	  fflush (stdout);
 	}
+#if defined(__human68k__) && !defined(__LIBC__)
       if (j >= 240)
 	{
 	  /* create indirect file */
@@ -1102,7 +1117,7 @@ execute ()
 	      v[j] = 0;
 	    }
 #ifndef NO_CSHWILD
-	  else if (strcmp (p, "gcc_cc1.x") == 0 || strcmp (p, "gcc_cpp.x") == 0)
+	  else if (strcmp (p, "gcc_cc1") == 0 || strcmp (p, "gcc_cpp") == 0)
 	    {
 	      v[1] = *a++;
 	      v[2] = indirect_file_buf;
@@ -1143,6 +1158,7 @@ execute ()
 	    unlink (indirect_file_p);
 	}
       else
+#endif /* defined(__human68k__) && !defined(__LIBC__) */
 	{
 	normal_execute:
 	  if (program_is_as)
@@ -1160,7 +1176,7 @@ execute ()
       if (ret_code == 0)
 	{
 	  if (program_is_cc1)
-	    unlink (human68k_pathinit ("$temp\\mariko.err"));
+	    unlink (human68k_pathinit ("$temp\\gcc.err"));
 	  no_delete_temp = 0;
 	  continue;
 	}
@@ -1174,21 +1190,29 @@ execute ()
 	  char *env;
 	  if (ret_code == 33
 	      && program_is_cc1
+#ifdef FUNNY_ENV
 	      && (NULL != (env = getenv ("真里子")) || NULL != (env = getenv ("MARIKO"))))
+#else
+	      && (NULL != (env = getenv ("GCC_OPTION0"))))
+#endif
 	    {
 	      for ( ; *env != '\0'; env++)
 		if ((*env == 'D' || *env == 'E' )
-		    && (INTVCG(0x20) & 0xffff0000) == 0x20ff0000)
+		    && (((int) _dos_intvcg (0x20)) & 0xffff0000) == 0x20ff0000)
 		  {
 		    int temp_ret;
-		    char *tag = human68k_pathinit ("$temp\\mariko.err");
+		    char *tag = human68k_pathinit ("$temp\\gcc.err");
+#ifdef FUNNY_ENV
 		    env = getenv ("満里奈");
 		    env = env ? env : getenv ("MARINA");
+#else
+		    env = getenv ("GCC_ED");
+#endif
 		    if (env)
 		      while (*env == ' ')
 			env++;
-		    if (!env || (env && !strcmpi (env, "em.x")))
-		      temp_ret= spawnlp (P_WAIT, "em.x", "em.x", "-e", 0);
+		    if (!env || (env && !strcmpi (env, "em")))
+		      temp_ret= spawnlp (P_WAIT, "em", "em", "-e", 0);
 		    else
 		      temp_ret= spawnlp (P_WAIT, env, env, tag, 0);
 		    if (string != commands[i].prog)
@@ -2176,7 +2200,11 @@ main (argc, argv)
 
 #ifdef __human68k__
   standard_startfile_prefix = human68k_pathinit ("$lib\\");
+#ifdef FUNNY_ENV
   use_unix_libname = getenv ("GCC_NO_XCLIB") ? 1 : 0;
+#else
+  use_unix_libname = getenv ("GCC_XCLIB") ? 0 : 1;
+#endif
 #endif
 
   programname = argv[0];
@@ -2232,7 +2260,7 @@ main (argc, argv)
       *d++ = 'l';
       *d++ = 'p';
       *d++ = '\0';
-      help = fopen (fname,"r");
+      help = fopen (fname,"rt");
       if (help)
        {
          int c;
@@ -2347,7 +2375,7 @@ re_do:
       char *tem1;
       char *tem2;
       if (!p)
-        p = "lk.x";
+        p = "hlk";
       if (!q)
         q = ".a";
       link_spec = alloca (strlen (hu_lk1) + strlen (hu_lk2) + 30);
@@ -2450,7 +2478,11 @@ pfatal_with_name (name)
   extern int errno, sys_nerr;
   char *s;
 
+#ifdef __LIBC__
+  if (++errno < sys_nerr)
+#else
   if (errno < sys_nerr)
+#endif
     s = concat ("%s: ", sys_errlist[errno], "");
   else
     s = "cannot open %s";
@@ -2463,7 +2495,11 @@ perror_with_name (name)
   extern int errno, sys_nerr;
   char *s;
 
+#ifdef __LIBC__
+  if (++errno < sys_nerr)
+#else
   if (errno < sys_nerr)
+#endif
     s = concat ("%s: ", sys_errlist[errno], "");
   else
     s = "cannot open %s";
@@ -2476,7 +2512,11 @@ perror_exec (name)
   extern int errno, sys_nerr;
   char *s;
 
+#ifdef __LIBC__
+  if (++errno < sys_nerr)
+#else
   if (errno < sys_nerr)
+#endif
     s = concat ("installation problem, cannot exec %s: ",
 		sys_errlist[errno], "");
   else
@@ -2720,16 +2760,24 @@ human68k_pathinit(p)
 		t++;
 	      x += strlen (t);
 	      p = (char *) xmalloc (x+1);
+#ifdef SLASH_CONV
 	      for(c = p; x = *s++;)
 		*c++ = (x == '/') ? '\\' : x;
 	      while(x = *t++)
 		*c++ = (x == '/') ? '\\' : x;
 	      *c = 0;
 	      return p;
+#else
+	      return strcat (strcpy (p, s), t);
+#endif
 	    }
 	}
     }
+#ifdef SLASH_CONV
   for (; *p != '\\'; p++);
+#else
+  for (; *p != '\\' && *p != '/'; p++);
+#endif
   return ++p;
 }
 #endif
