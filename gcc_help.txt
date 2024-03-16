@@ -1,0 +1,128 @@
+ Copyright (C) 1987, 1988, 1989, 1990, 1991, 1992 Free Software Foundation, Inc.
+ GNU CC is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ X680x0 真里子バージョン Based on GCC 1.42
+
+ gcc command option
+
+ -S			  : アセンブラを起動しない
+ -c			  : リンカを起動しない
+ -E			  : プリプロセッサ出力を標準出力へ書き出す
+ -C			  : コメントを除去しない `-E' オプション
+ -O			  : 出力コードを最適化する
+ -I <path>		  : インクルードパス指定
+ -o <file-name>		  : 出力ファイルネームの指定
+ -l<lib>lib		  : リンクライブラリの指定
+ -Q			  : バーボーズモード指定
+ -v			  : コンパイラパスをエコーする
+ -version		  : gcc バージョン表示
+ -M			  : ファイル依存関係を出力(System Header も含む)
+ -MM			  : ファイル依存関係を出力(User Header のみ)
+ -w			  : 警告を禁止する
+ -Wall			  : 警告レベルを規定まで上昇する
+ -ansi			  : ANSI 規定に従う
+ -pedantic		  : ANSI 規定に厳密に従う
+ -traditinal		  : K&R 1st edition C の文法に準拠する
+ -trigraphs		  : trigraph シーケンスを認識する
+ -m<cpu>		  : 680x0 対応コードを生成する(cpu=68000～68040)
+ -m68881		  : 68881 対応コードを生成する
+ -mshort		  : int を 16bit int とする(XC 非互換)
+ -mregparm		  : 引数をレジスタ渡しにする(XC 非互換)
+ -D<macro>		  : <macro> を #define する
+ -D<macro>=macro	  : <macro> を macro に #define する
+ -U<macro>		  : <macro> を #undef する
+ -g			  : SCD デバッグフォーマットでコンパイルする
+ -p			  : 関数単位プロファイルを行う
+ -a			  : 構文ブロック単位でのプロファイルを行う
+ -fno-defer-pop		  : スタック一括補正の禁止
+ -fomit-frame-pointer	  : 可能ならスタックフレームを生成しない
+ -fstrength-reduce	  : ループ内演算強度の低減
+ -fwritable-strings	  : 文字列リテラルを書き換え可能にする
+ -fno-peep-hole		  : 覗き穴最適化を禁止する
+ -fforce-mem		  : メモリ上での演算の最適化
+ -fforce-addr		  : アドレス演算の最適化
+ -fcombine-regs		  : レジスタ演算の最適化
+ -fno-function-cse	  : レジスタ間接コールの禁止
+ -finline-functions	  : インライン展開可能な関数をインライン展開する
+ -fkeep-inline-functions  : インライン展開可能であっても実体を出力しておく
+ -fpcc-struct-return	  : XC(pcc)と同じ形式で構造体を返す
+ -funsigned-char	  : plain char を unsigned にする
+
+ -f option による最適化は必ず有効とは限らないので注意
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+X680x0 専用スイッチ
+
+ -SX			  ; SX-Window コードモード指定
+ -fstrings-align	  ; 文字列先頭を偶数整合する
+ -fstack_check		  ; スタックチェックコードの生成
+ -fall-bsr		  ; 関数を全て bsr で呼び出す
+ -fstruct-strict-align	  ; 構造体を厳密にパッキングする(XC 非互換)
+ -fall-text		  ; 全セクションを .text に出力する
+ -fscd			  ; `-g' オプションと同じ
+ -frtl-debug		  ; アセンブラファイルに rtl をダンプする(gcc debug 用)
+ -fno-const-mult-expand	  ; 定数との乗算を shift/add に展開しない
+ -fundump-FILENAME	  ; undump コンパイルを行う
+ -fall-remote		  ; SX-Window コードモードで変数を全て remote にする
+ -fansi-only		  ; ANSI で規定された予約語のみ認識する
+ -ffppp			  ; fppp 用のコードを生成する
+ -ffpu-hard-bug		  ; ハードウェア障害を回避するコードを生成する
+ -fignor-cpu-type	  ; CPU 検査コードを挿入しない
+ -flong-offset		  ; pc 間接命令を 32 ビットオフセットにする
+ -fms-dos		  ; MS-DOS 系コンパイラで使われる予約語を無視する
+ -fpic			  ; 変数を全て a5 間接アドレッシングにする
+ -cc1-stack=SIZE(10進)	  ; gcc_cc1 のスタックサイズを SIZE にする
+ -cpp-stack=SIZE(10進)	  ; gcc_cpp のスタックサイズを SIZE にする
+ -z-heap=SIZE(10進)	  ; 生成実行ファイルのヒープを SIZE にする
+ -z-stack=SIZE(10進)	  ; 生成実行ファイルのスタックを SIZE にする
+
+環境変数
+
+ GCC_OPTION0 = ABCDEF
+     C: -g オプション default 設定
+     D: 疑似統合環境(エラーのみ)
+     E: 疑似統合環境(ワーニング含む)
+     F: コンパイルフェーズの表示
+
+ GCC_OPTION1 = LFIAMWSPOE+
+
+     L: -fstrength-reduce 指定
+     F: -fomit-frame-pointer 指定
+     I: -finline-functions 指定
+     A: -fforce-addr 指定
+     M: -fforce-mem 指定
+     W: -Wall 指定
+     S: -fstack_check 指定
+     P: pea 0.w → clr.l -(sp)
+     E: エラータグを ED 形式にする
+
+  -Q オプションを使うと、現在有効な -f オプションが表示されます。
+
+  GCC_ED = 疑似統合環境エディタ指定
+  GCC_AS = アセンブラ指定
+  GCC_LINK = リンカー指定
+
+  XC Ver 2 環境をそのままを使う場合、リンクをする際に ``-lfloatfnc''
+  を必ず指定して下さい。
+
+  ライブラリ名は lib*.a です(変更はできません)。
+
+  SXEQU = mysxcall.equ
+
+  SXモードでアセンブル時に使用するシンボル定義ファイルを指定します。
+  指定がない場合は sxcall.equ です。
+
+  DOSEQU = mydoscall.equ
+
+  Human68k モードでアセンブル時に使用するシンボル定義ファイルを指定します。
+  指定がない場合は doscall.equ です。
+
+  GCC_TEXT_ALIGN = 関数直前の境界整合疑似命令
+  GCC_BLOCK_ALIGN = 無条件分岐直後〃
+  GCC_DATA_ALIGN = データセクション〃
+
+  -m68020～68040 指定時に出力する境界整合疑似命令を指定します。
+
