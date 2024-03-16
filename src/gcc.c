@@ -327,6 +327,8 @@ struct compiler
    unchanged to the loader and nothing else will be done to it.  */
 
 #ifdef __human68k__
+#define ASSEMBLER "has060"
+
 struct compiler compilers[] =
 {
   {".c",
@@ -344,16 +346,16 @@ struct compiler compilers[] =
  %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}\
  %{!S:%{!ffppp:-o %g.s}%{ffppp:-o %g.ss}}}}} |\n\
  %{!M*:%{!E:%{!S:%{ffppp:fppp -o %g.s %g.ss}}}} |\n\
- %{!M*:%{!E:%{!S:has %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s\
+ %{!M*:%{!E:%{!S:" ASSEMBLER " %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s\
  %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n}}}"},
   {".i",
 "gcc_cc1 %{cc1-stack=*:-+-s:%X1} %{!cc1-stack=*:-+-s:%X1}\
 %i %1 %{!Q:-quiet} %{Y*} %{d*} %{m*} %{f*} %{a}\
 %{g} %{O*} %{W*} %{w} %{p} %{pedantic} %{ansi} %{traditional}\
 %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}%{!S:-o %g.s} |\n\
-%{!S:has %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
+%{!S:" ASSEMBLER " %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
 {".s",
- "%{!S:has %a %{SX: -r} %{as-symbols=*:/m %XS} %i %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
+ "%{!S:" ASSEMBLER " %a %{SX: -r} %{as-symbols=*:/m %XS} %i %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
   /* Mark end of table */
   {0, 0}
 };
@@ -1056,7 +1058,7 @@ execute ()
       if (strcmp (p, "gcc_cc1") == 0
           || strcmp (p, "gcc_cpp") == 0)
 	program_is_cc1 = 1;
-      if (strcmp (p, "has") == 0)
+      if (strcmp (p, ASSEMBLER) == 0)
 	program_is_as = 1;
       if (strcmp (p, getenv ("GCC_LINK") ? : "hlk") == 0)
 	{

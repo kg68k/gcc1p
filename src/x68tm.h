@@ -32,7 +32,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #undef STANDARD_STARTFILE_PREFIX
 
 /* has.x spec */
-#define ASM_SPEC	"-e -w -u -i %I"
+#define ASM_SPEC	"-1 -w -u -i %I"
 
 /* hlk.x spec, but never used */
 #define LIB_SPEC "%{ldos:doslib.a%s} %{liocs:iocslib.a%s} %{lbas:baslib.a%s}"
