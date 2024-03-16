@@ -416,18 +416,13 @@ struct compiler compilers[] =
 
 /* Here is the spec for running the linker, after compiling all files.  */
 #ifdef __human68k__
-short use_unix_libname;
 char *HUMAN68K_LIB_SPEC;
 char *link_spec;
 char *hu_lk1= "%{!c:%{!M*:%{!E:%{!S:%{!C:";
-char *hu_lk2= " %%{z-heap=*:-d_HEAP_SIZE=%%XH} %%{z-stack=*:-d_STACK_SIZE=%%XT}\
- %%{v} %%{s:-x} %%{x} %%{b*} %%{o*} %%o %%L\
- %%{SX: -s %%{!nostdlib:_sxlib%s%%s gnulib%s%%s }}\
- %%{!SX:%%{p:proflib%s%%s} %%{!nostdlib:clib%s%%s gnulib%s%%s}\n }}}}}}";
-char *hu_lk3= " %%{z-heap=*:-d_HEAP_SIZE=%%XH} %%{z-stack=*:-d_STACK_SIZE=%%XT}\
- %%{v} %%{s:-x} %%{x} %%{b*} %%{o*} %%o %%L\
- %%{SX: -s %%{!nostdlib:lib_sx%s%%s libgnu%s%%s }}\
- %%{!SX:%%{p:libprof%s%%s} %%{!nostdlib:libc%s%%s libgnu%s%%s}\n }}}}}}";
+char *hu_lk3= " %{z-heap=*:-d_HEAP_SIZE=%XH} %{z-stack=*:-d_STACK_SIZE=%XT}\
+ %{v} %{s:-x} %{x} %{b*} %{o*} %o %L\
+ %{SX:-s %{!nostdlib:lib_sx.a%s libgnu.a%s }}\
+ %{!SX:%{p:libprof.a%s} %{!nostdlib:libc.a%s libgnu.a%s}\n }}}}}}";
 #else
 char *link_spec = "%{!c:%{!M*:%{!E:%{!S:ld %{o*} %l\
  %{A} %{d} %{e*} %{N} %{n} %{r} %{s} %{S} %{T*} %{t} %{u*} %{X} %{x} %{z}\
@@ -1063,7 +1058,7 @@ execute ()
 	program_is_cc1 = 1;
       if (strcmp (p, "has") == 0)
 	program_is_as = 1;
-      if (strcmp (p, getenv ("GCC_LINK")!=0 ? getenv ("GCC_LINK"): "hlk") == 0)
+      if (strcmp (p, getenv ("GCC_LINK") ? : "hlk") == 0)
 	{
 #ifndef __LIBC__
 	  program_is_cash = 1;
@@ -1071,8 +1066,7 @@ execute ()
 	  no_delete_temp = 1;
 	  for (a = commands[i].argv+1; *a; a++)
 	    {
-	      if (strcmp (*a + strlen (*a) - 2,
-			 getenv ("GCC_LIB")!=0 ? getenv ("GCC_LIB"): ".a") == 0)
+	      if (strcmp (*a + strlen (*a) - 2, ".a") == 0)
 		{
 		  for(s = *a; *s; s++)
 		    if (*s == '/' || *s == ':' || *s == '\\')
@@ -1190,11 +1184,7 @@ execute ()
 	  char *env;
 	  if (ret_code == 33
 	      && program_is_cc1
-#ifdef FUNNY_ENV
-	      && (NULL != (env = getenv ("真里子")) || NULL != (env = getenv ("MARIKO"))))
-#else
 	      && (NULL != (env = getenv ("GCC_OPTION0"))))
-#endif
 	    {
 	      for ( ; *env != '\0'; env++)
 		if ((*env == 'D' || *env == 'E' )
@@ -1202,12 +1192,7 @@ execute ()
 		  {
 		    int temp_ret;
 		    char *tag = human68k_pathinit ("$temp\\gcc.err");
-#ifdef FUNNY_ENV
-		    env = getenv ("満里奈");
-		    env = env ? env : getenv ("MARINA");
-#else
 		    env = getenv ("GCC_ED");
-#endif
 		    if (env)
 		      while (*env == ' ')
 			env++;
@@ -1441,16 +1426,7 @@ process_command (argc, argv)
 		  x += strlen (x);
 		  *x++ = ' ';
 		}
-	      if (lib = getenv ("GCC_LIB"))
-		if (use_unix_libname)
-		  sprintf (x, "%%{l%s:lib%s%s%%s}", p+1, p+1,lib);
-		else
-		  sprintf (x, "%%{l%s:%slib%s%%s}", p+1, p+1,lib);
-	      else
-		if (use_unix_libname)
-		  sprintf (x, "%%{l%s:lib%s.a%%s}", p+1, p+1);
-		else
-		  sprintf (x, "%%{l%s:%slib.a%%s}", p+1, p+1);
+	      sprintf (x, "%%{l%s:lib%s.a%%s}", p+1, p+1);
 	    }
 #else
 	  if (c == 'B' || c == 'b')
@@ -2200,11 +2176,6 @@ main (argc, argv)
 
 #ifdef __human68k__
   standard_startfile_prefix = human68k_pathinit ("$lib\\");
-#ifdef FUNNY_ENV
-  use_unix_libname = getenv ("GCC_NO_XCLIB") ? 1 : 0;
-#else
-  use_unix_libname = getenv ("GCC_XCLIB") ? 0 : 1;
-#endif
 #endif
 
   programname = argv[0];
@@ -2366,30 +2337,14 @@ re_do:
 
   if (error_count == 0)
     {
-#ifdef __human68k__
-      char *p = getenv ("GCC_LINK");
-      char *q = getenv ("GCC_LIB");
-#endif
       int tmp = execution_count;
 #ifdef __human68k__
-      char *tem1;
-      char *tem2;
-      if (!p)
-        p = "hlk";
-      if (!q)
-        q = ".a";
-      link_spec = alloca (strlen (hu_lk1) + strlen (hu_lk2) + 30);
-      tem1 = link_spec;
-      tem2 = hu_lk1;
-      while (*tem1++ = *tem2++) ;
-      tem1--;
-      tem2 = p;
-      while (*tem1++ = *tem2++) ;
-      tem1--;
-      if (use_unix_libname)
-        sprintf (tem1, hu_lk3, q ,q, q, q, q);
-      else
-        sprintf (tem1, hu_lk2, q ,q, q, q, q);
+      if (!link_spec) {
+        char *p = getenv ("GCC_LINK") ? : "hlk";
+        size_t len = strlen (hu_lk1) + strlen (p) + strlen (hu_lk3);
+        char* buf = xmalloc (len + 1);
+        link_spec = strcat (strcat (strcpy (buf, hu_lk1), p), hu_lk3);
+      }
 #endif
       value = do_spec (link_spec);
       if (value < 0)

@@ -344,9 +344,15 @@ int flag_fppp;
 int flag_ansi;
 int flag_long_offset;
 int flag_fpu_hard_bug;
-int mariko;
+
+enum {
+  GCC_OPTION0_A = 0x01,
+  GCC_OPTION0_B = 0x02,
+};
+int mariko = GCC_OPTION0_A | GCC_OPTION0_B;
+
 int dbra_call_ok;
-int x68k_only;
+int x68k_only = 1;
 int inline_mult_ok = 1;
 int flag_text_report;
 static char *default_colon = ":";
@@ -2354,23 +2360,15 @@ exit_rest_of_compilation:
 static void 
 ___mari ()
 {
-#ifdef FUNNY_ENV
-  char *env = getenv ("真里子");
-  if (!env)
-    env = getenv ("MARIKO");
-#else
   char *env = getenv ("GCC_OPTION0");
-#endif
   if (env)
     while (*env)
       {
 	switch (*env)
 	  {
 	  case 'A':
-	    mariko |= 0x1;
 	    break;
 	  case 'B':
-	    mariko |= 0x2;
 	    break;
 	  case 'C':
 	    write_symbols = SDB_DEBUG;
@@ -2421,8 +2419,8 @@ ___mari ()
     }
   else
     data_section_align_op = "\t.even\n";
-  env = getenv ("GCC_TEXT_ALIGN");
 
+  env = getenv ("GCC_TEXT_ALIGN");
   if (env)
     {
       char *s = env;
@@ -2542,13 +2540,6 @@ x68_getenv ()
 	{
 	  switch (*env)
 	    {
-#if 0
-	      extern short gram_uok;
-	      extern short tram_uok;
-#else
-	      short gram_uok;
-	      short tram_uok;
-#endif
 	    case 'L':
 	      flag_strength_reduce = 1;
 	      break;
@@ -2575,13 +2566,10 @@ x68_getenv ()
 	      flag_slow = 1;
 	      break;
 	    case 'G':
-	      gram_uok = 1;
 	      break;
 	    case 'T':
-	      tram_uok = 1;
 	      break;
 	    case 'O':
-	      x68k_only = 1;
 	      break;
 	    case 'E':
 	      default_colon = "";

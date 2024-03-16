@@ -608,9 +608,6 @@ main (argc, argv)
   int inhibit_predefs = 0;
   int no_standard_includes = 0;
 
-#ifdef __human68k__
-  int sura_sura_comment = 0;
-#endif
   /* Non-0 means don't output the preprocessed program.  */
   int inhibit_output = 0;
 
@@ -650,8 +647,6 @@ main (argc, argv)
               fmt_error ="%s %5d: Error :";
               fmt_warn  ="%s %5d:";
             }
-      	  if (*env == '+')
-	    sura_sura_comment = 1;
 	  if (*env == '@')
 	    gcc_err_file = stdout;
           env ++;
@@ -968,8 +963,7 @@ main (argc, argv)
   }
 
 #ifdef __human68k__
-  if (sura_sura_comment)
-    cplusplus = 1;
+  cplusplus = 1;
 #endif
   /* Initialize output buffer */
 
@@ -5099,17 +5093,11 @@ static void
 tag_file_open()
 {
  char *temp_dir = getenv ("TEMP");
-#ifdef FUNNY_ENV
- char *mariko = getenv ("真里子");
-#else
  char *mariko = getenv ("GCC_OPTION0");
-#endif
+
  if (!temp_dir && !(temp_dir = getenv ("temp")))
    temp_dir = "";
-#ifdef FUNNY_ENV
- if (!mariko)
-   mariko = getenv ("MARIKO");
-#endif
+
  if (mariko)
    {
      for (;*mariko;mariko ++)
