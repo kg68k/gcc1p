@@ -1,11 +1,7 @@
 	.title	libgcc.a(_divsi3.o)
 
 * int __divsi3 (int, int);
-*	signed int同士を除算し、商をsigned intで返す.
-
-* 1998/10/29 立花.
-*	新規作成. USE_FLOAT 定義時のみ FLOAT を呼び出す. 未定義なら空の
-*	ファイルとなる.
+*	signed int同士を除算し、商をsigned intで返す。
 
 	.include	fefunc.mac
 

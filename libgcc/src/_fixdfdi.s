@@ -1,11 +1,7 @@
 	.title	libgcc.a(_fixdfdi.o)
 
 * long long int __fixdfdi (double);
-*	doubleをlong long intに変換して返す.
-
-* 1997/10/24 立花.
-*	libgnu-1.50p2 fixdfdi.sのコードに入れ換えた.
-*	省サイズ、高速化. 一部のルーチンの移動.
+*	doubleをlong long intに変換して返す。
 
 	.cpu	68000
 

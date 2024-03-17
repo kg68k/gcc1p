@@ -1,19 +1,7 @@
 	.title	libgcc.a(_floatdisf.o)
 
 * float __floatdidf (long long int);
-*	long long int を float に変換して返す.
-
-* 1997/10/25 立花.
-*	__floatdidf() と __truncdfsf2() を使用して変換するようにした.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は、double から float への縮小で FLOAT を呼び出
-*	すようにした.
-
-* 1999/05/29 立花.
-*	引数を float として受け取っていた不具合を修正(thanks to mor).
-*	関数呼び出しをレジスタ渡しのインターフェイスに変更した.
-
+*	long long int を float に変換して返す。
 
 	.include	fefunc.mac
 

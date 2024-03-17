@@ -1,11 +1,7 @@
 	.title	libgcc.a(_fixunsdfsi.o)
 
 * unsigned int __fixunsdfsi (double);
-*	doubleをunsigned intに変換して返す.
-
-* 1997/10/25 立花.
-*	libgnu-1.50p2 fxunsdfsi.sのコードに入れ換えた.
-*	一部のルーチンの移動. 高速化. rtsへのbraをrtsに置換.
+*	doubleをunsigned intに変換して返す。
 
 	.cpu	68000
 

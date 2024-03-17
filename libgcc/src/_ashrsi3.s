@@ -1,9 +1,7 @@
 	.title	libgcc.a(_ashrsi3.o)
 
 * int __ashrsi3 (int, int);
-*	intを算術右シフトしてintで返す.
-
-* libgnu-1.50pl2 ashrsi3.sと同じ.
+*	intを算術右シフトしてintで返す。
 
 	.cpu	68000
 

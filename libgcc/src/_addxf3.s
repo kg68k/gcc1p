@@ -1,15 +1,10 @@
 	.title	libgcc.a(_addxf3.o)
 
 * long double __addxf3 (long double, long double);
-*	long double同士を加算して返す.
+*	long double同士を加算して返す。
 
 * long double __subxf3 (long double, long double);
-*	long double同士を減算して返す.
-
-* 1997/11/11 立花.
-*	has version 3.09 fexpr.s(xsub/xadd)のコードを使用し、
-*	若干修正して作成.
-
+*	long double同士を減算して返す。
 
 	.cpu	68000
 

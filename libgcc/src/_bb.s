@@ -1,21 +1,11 @@
 	.title	libgcc.a(_bb.o)
 
 * static int num_digits (long value, int base);
-*	指定した値を表示するのに必要な桁数を返す.
+*	指定した値を表示するのに必要な桁数を返す。
 
 * void __bb_exit_func (void);
 
 * void __bb_init_func (struct bb*);
-
-* 1997/10/24 立花.
-*	省サイズ、高速化.
-
-* 1997/11/12 立花.
-*	ショートアドレッシングの修正.
-
-* 1998/11/13 立花.
-*	USE_FLOAT 定義時は __udivsi3() ではなく FLOAT を呼び出すようにし
-*	た. strlen() の呼び出しをマクロ展開した.
 
 	.xref	_fopen,_fclose,_fflush,_fprintf
 	.xref	_time,_ctime
@@ -30,15 +20,14 @@
 _bb_head:
 	.dc.l	0
 
-STRLEN:		.macro	areg,dreg
-		.local	loop
-		move.l	areg,dreg
-loop:		tst.b	(areg)+
-		bne	loop
-		subq.l	#1,areg
-		exg	dreg,areg
-		sub.l	areg,dreg
-		.endm
+STRLEN:	.macro	areg,dreg
+	move.l	areg,dreg
+@loop:	tst.b	(areg)+
+	bne	@loop
+	subq.l	#1,areg
+	exg	dreg,areg
+	sub.l	areg,dreg
+	.endm
 
 	.text
 
@@ -346,7 +335,7 @@ L00037e:
 	addq.l	#8,sp
 L00039e:
 	movem.l	(sp)+,d3-d7/a3-a6
-	adda	#$1c,sp
+	lea	($1c,sp),sp
 	rts
 
 ___bb_init_func::

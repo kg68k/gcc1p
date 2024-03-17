@@ -1,25 +1,16 @@
 	.title	libgcc.a(_divmodsi3.o)
 
 * int __divsi3 (int, int);
-*	signed int 同士を除算し、商を signed int で返す.
+*	signed int 同士を除算し、商を signed int で返す。
 
 * int __udivsi3 (int, int);
-*	unsigned int 同士を除算し、商を unsigned int で返す.
+*	unsigned int 同士を除算し、商を unsigned int で返す。
 
 * int __modsi3 (int, int);
-*	signed int 同士を除算し、余りを signed int で返す.
+*	signed int 同士を除算し、余りを signed int で返す。
 
 * int __umodsi3 (int, int);
-*	unsigned int 同士を除算し、余りを unsigned int で返す.
-
-* 1997/10/24 立花.
-*	_divsi3.s と _modsi3.s を統合し、libgnu-1.50p2 divsi3.s/modsi3.s
-*	のコードに入れ換えた. 表に(d8,pc,ix)で届くように細切れにして
-*	しまった.
-
-* 1998/10/29 立花.
-*	USE_FLOAT 定義時は各関数を別ファイルに分割するようにした. その場
-*	合は空ファイルとなる.
+*	unsigned int 同士を除算し、余りを unsigned int で返す。
 
 	.cpu	68000
 

@@ -2,18 +2,8 @@
 
 * unsigned long long int __udivmoddi4 (ull int, ull int, ull int*);
 *	unsigned long long int 同士を除算し、商と余りを
-*	unsigned long long int で返す. 解を格納するメモリへのポインタが
-*	0 の場合は商のみ返す.
-
-
-* 1997/11/12 立花.
-*	表を .text セクションに移動.
-*	ショートアドレッシングの修正.
-
-* 1998/10/29 立花.
-*	USE_FLOAT 定義時は __umodsi3() __udivsi3() __mulsi3() ではなく
-*	FLOAT を呼び出すようにした.
-
+*	unsigned long long int で返す。
+*	解を格納するメモリへのポインタが0の場合は商のみ返す。
 
 	.include	fefunc.mac
 
@@ -767,7 +757,7 @@ L000626:
 	move.l	($44,sp),d0
 	move.l	($48,sp),d1
 	movem.l	(sp)+,d3-d7/a3-a6
-	adda	#$2c,sp
+	lea	($2c,sp),sp
 	rts
 
 	.end

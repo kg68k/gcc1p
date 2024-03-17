@@ -1,21 +1,10 @@
 	.title	libgcc.a(_addsf3.o)
 
 * float __addsf3 (float, float);
-*	float 同士を加算して float で返す.
+*	float 同士を加算して float で返す。
 
 * float __subsf3 (float, float);
-*	float 同士を減算して float で返す.
-
-* 1997/10/23 立花.
-*	(_subsf3.s を削除)
-*	__subsf3 のエントリを __addsf3 の直前に移動、高速化.
-*	returnzero を真ん中辺に移動. 直後への bra を削除. 第 7 ビットの
-*	テストを btst #7 から tst.b に変更.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は FLOAT を呼び出すようにした. また、__subsf3()
-*	は _subsf3.s で定義される.
-*	libgnu versin 1.46 fpack.lzh::_addsf3.s と同じ.
+*	float 同士を減算して float で返す。
 
 	.include	fefunc.mac
 

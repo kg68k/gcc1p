@@ -1,14 +1,7 @@
 	.title	libgcc.a(_extendsfxf2.o)
 
 * long double __extendsfxf2 (float);
-*	floatをlong doubleに変換して返す.
-
-* 1997/10/25 立花.
-*	新規作成.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は、float から double への拡張で FLOAT を呼び出
-*	すようにした.
+*	floatをlong doubleに変換して返す。
 
 	.include	fefunc.mac
 

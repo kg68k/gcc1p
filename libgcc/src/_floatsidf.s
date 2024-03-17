@@ -1,13 +1,7 @@
 	.title	libgcc.a(_floatsidf.o)
 
 * double __floatsidf (int);
-*	intをdoubleに変換して返す.
-
-* 1997/10/25 立花.
-*	第 7 ビットのテストを btst #7 から tst.b に変更.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は FLOAT を呼び出すようにした.
+*	intをdoubleに変換して返す。
 
 	.include	fefunc.mac
 

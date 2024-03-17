@@ -1,10 +1,7 @@
 	.title	libgcc.a(_truncxfdf2.o)
 
 * double _truncxfdf2 (long double);
-*	long doubleをdoubleに変換して返す.
-
-* 1997/10/25 立花.
-*	has version 3.09 fexpr.s(xotd)のコードを使用し、若干修正して作成.
+*	long doubleをdoubleに変換して返す。
 
 	.cpu	68000
 

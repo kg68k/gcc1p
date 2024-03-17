@@ -1,11 +1,7 @@
 	.title	libgcc.a(_subdf3.o)
 
 * double __subdf3 (double, double);
-*	double同士を減算してdoubleで返す.
-
-* 1997/10/24 立花.
-*	無駄なrtsを削除.
-
+*	double同士を減算してdoubleで返す。
 
 	.include	fefunc.mac
 

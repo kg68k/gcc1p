@@ -1,10 +1,7 @@
 	.title	libgcc.a(_udiv_w_sdiv.o)
 
 * unsigned int __udiv_w_sdiv (unsigned int*, unsigned int, unsigned int, unsigned int);
-*	除算ルーチン.
-
-* sdiv_qrnnd()がどこにもないのでリンク出来ない.
-
+*	除算ルーチン。
 
 	.xref	_sdiv_qrnnd
 

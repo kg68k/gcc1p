@@ -1,11 +1,7 @@
 	.title	libgcc.a(_umodsi3.o)
 
 * int __umodsi3 (int, int);
-*	unsigned int 同士を除算し、余りを unsigned int で返す.
-
-* 1998/10/29 立花.
-*	新規作成. USE_FLOAT 定義時のみ FLOAT を呼び出す. 未定義なら空の
-*	ファイルとなる.
+*	unsigned int 同士を除算し、余りを unsigned int で返す。
 
 	.include	fefunc.mac
 

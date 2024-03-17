@@ -1,11 +1,8 @@
 	.title	libgcc.a(_ucmpdi2.o)
 
 * int __ucmpdi2 (long long int, long long int);
-*	long long int同士を符号なしで比較して、大小関係をintで返す.
-*	0ならより小さい、1なら等しい、2ならより大きい.
-
-* 1997/10/24 立花.
-*	libgnu-1.50p2 cmpdi2.sのコードに入れ換えた.
+*	long long int同士を符号なしで比較して、大小関係をintで返す。
+*	0ならより小さい、1なら等しい、2ならより大きい。
 
 	.cpu	68000
 

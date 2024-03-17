@@ -1,16 +1,7 @@
 	.title	libgcc.a(_floatdidf.o)
 
 * double __floatdidf (long long int);
-*	long long intをdoubleに変換して返す.
-
-* 1997/10/25 立花.
-*	libgnu-1.50p2 floatdidf.sのコードに入れ換えた.
-*	省サイズ. 第7ビットのテストをbtst #7からtst.bに変更.
-
-* 1999/05/29 立花.
-*	_floatdisf.s からの直接呼び出し用に ___floatdidf_ を追加.
-*	呼び出し直前に <tst.l d0> を実行しておくこと.
-
+*	long long intをdoubleに変換して返す。
 
 	.cpu	68000
 
@@ -19,8 +10,8 @@
 ___floatdidf::
 	move.l	(4,sp),d1
 	move.l	(8,sp),d0
-___floatdidf_::
-	move.l	d0,a0
+___floatdidf_::			;_floatdisf.s からの直接呼び出し用
+	move.l	d0,a0		;呼び出し直前に <tst.l d0> を実行しておくこと
 	bpl	normalize
 	neg.l	d1
 	negx.l	d0

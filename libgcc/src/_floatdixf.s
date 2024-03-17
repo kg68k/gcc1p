@@ -1,15 +1,7 @@
 	.title	libgcc.a(_floatdixf.o)
 
 * long double __floatdixf (long long int);
-*	long long intをlong doubleに変換して返す.
-
-* 1997/10/24 立花.
-*	long doubleの値を修正し、命令に埋め込むようにした.
-*	省サイズ、高速化.
-
-* 1997/11/12 立花.
-*	関数呼び出しが正しく行われなくなっていた不具合を修正.
-
+*	long long intをlong doubleに変換して返す。
 
 	.xref	___negdi2
 	.xref	___floatsixf

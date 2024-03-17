@@ -8,13 +8,6 @@
 
 * void __register_exceptions (exception_table*);
 
-* 1997/10/24 立花.
-*	省サイズ、高速化. 変数をtextセクションに移動.
-
-* 1997/11/12 立花.
-*	ショートアドレッシングの修正.
-
-
 	.xref	_strcmp
 	.xref	_malloc
 

@@ -2,11 +2,8 @@
 
 * long long int __ffsdi2 (long long int);
 *	long long int中で最下位ビットから何番目に始めて'1'のビットが
-*	表われるかをlong long intで返す('1'のビットがなければ0を返す).
-*	標準関数ffs()のlong long版.
-
-* 1997/10/24 立花.
-*	書き下しによる高速化.
+*	表われるかをlong long intで返す('1'のビットがなければ0を返す)。
+*	標準関数ffs()のlong long版。
 
 	.cpu	68000
 

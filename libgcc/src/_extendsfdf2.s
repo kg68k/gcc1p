@@ -1,15 +1,7 @@
 	.title	libgcc.a(_extendsfdf2.o)
 
 * double __extendsfdf2 (float);
-*	float を double に変換して返す.
-
-* 1997/10/26 立花.
-*	libgnu-1.50p2 extendsfdf2.s のコードに入れ換えた.
-*	-0.0(及び負の非正規化数)は符号を保存して -0.0 に変換するようにし
-*	た.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は FLOAT を呼び出すようにした.
+*	float を double に変換して返す。
 
 	.include	fefunc.mac
 

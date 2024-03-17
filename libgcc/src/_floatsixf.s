@@ -1,11 +1,7 @@
 	.title	libgcc.a(_floatsixf.o)
 
 * long double __floatsixf (int);
-*	intをlong doubleに変換して返す.
-
-* 1997/11/11 立花.
-*	新規作成.
-
+*	intをlong doubleに変換して返す。
 
 	.cpu	68000
 

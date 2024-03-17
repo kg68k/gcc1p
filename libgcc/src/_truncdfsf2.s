@@ -1,18 +1,7 @@
 	.title	libgcc.a(_truncdfsf2.o)
 
 * float _truncdfsf2 (double);
-*	double を float に変換して返す.
-
-* 1997/10/25 立花.
-*	INF のロードを高速化. NaN のロードを分りやすくした.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は FLOAT を呼び出すようにした.
-*	libgnu versin 1.46 fpack.lzh::_truncdfsf2.s と同じ.
-
-* 1999/05/29 立花.
-*	_floatdisf.s からの直接呼び出し用に ___truncdfsf2_ を追加.
-
+*	double を float に変換して返す。
 
 	.include	fefunc.mac
 

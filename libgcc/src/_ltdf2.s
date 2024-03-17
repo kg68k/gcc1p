@@ -1,12 +1,8 @@
 	.title	libgcc.a(_ltdf2.o)
 
 * int __ltdf2 (double, double);
-*	double同士を比較し、より小さい又は等しいか否かの真偽値をintで返す.
-*	-1なら真、0なら偽.
-
-* 1997/10/23 立花.
-*	高速化.
-
+*	double同士を比較し、より小さい又は等しいか否かの真偽値をintで返す。
+*	-1なら真、0なら偽。
 
 	.xref	___cmpdf2
 

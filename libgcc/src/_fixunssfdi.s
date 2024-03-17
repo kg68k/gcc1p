@@ -1,16 +1,9 @@
 	.title	libgcc.a(_fixunssfdi.o)
 
 * long long int __fixunsdfdi (float);
-*	float を long long int に変換して返す.
+*	float を long long int に変換して返す。
 *	返値の型は signed だが、実際には unsigned を返す機能の関数であり
-*	引数が負数の場合は 0 を返す.
-
-* 1997/10/25 立花.
-*	__extendsfdf2() と __fixunsdfdi() を使用して変換するようにした.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は、float から double への拡張で FLOAT を呼び出
-*	すようにした.
+*	引数が負数の場合は 0 を返す。
 
 	.include	fefunc.mac
 

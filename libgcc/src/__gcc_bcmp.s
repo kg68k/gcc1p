@@ -1,10 +1,7 @@
 	.title	libgcc.a(__gcc_bcmp.o)
 
 * int __gcc_bcmp (unsigned char*, unsigned char*, size_t);
-*	二つの領域の内容を比較し、大小関係をintで返す.
-
-* 1997/10/24 立花.
-*	高速化.
+*	二つの領域の内容を比較し、大小関係をintで返す。
 
 	.cpu	68000
 

@@ -1,11 +1,7 @@
 	.title	libgcc.a(_muldi3.o)
 
 * long long int __muldi3 (long long int, long long int);
-*	long long int同士を乗算し、商をlong long intで返す.
-
-* 1997/10/24 立花.
-*	libgnu-1.50p2 muldi3.sのコードに入れ換えた.
-*	若干の高速化.
+*	long long int同士を乗算し、商をlong long intで返す。
 
 	.cpu	68000
 

@@ -1,12 +1,7 @@
 	.title	libgcc.a(_divxf3.o)
 
 * long double __divxf3 (long double, long double);
-*	double同士を除算して商を返す.
-
-* 1997/11/11 立花.
-*	has version 3.09 fexpr.s(xdiv)のコードを使用し、
-*	若干修正して作成.
-
+*	double同士を除算して商を返す。
 
 	.cpu	68000
 

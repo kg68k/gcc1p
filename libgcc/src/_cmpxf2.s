@@ -1,11 +1,7 @@
 	.title	libgcc.a(_cmpxf2.o)
 
 * int __cmpxf2 (long double, long double);
-*	long double同士を比較し、大小関係をintで返す.
-
-* 1997/11/11 立花.
-*	新規作成.
-
+*	long double同士を比較し、大小関係をintで返す。
 
 	.cpu	68000
 

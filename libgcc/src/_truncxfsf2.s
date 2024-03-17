@@ -1,14 +1,7 @@
 	.title	libgcc.a(_truncxfsf2.o)
 
 * float __truncxfsf2 (long double);
-*	long doubleをfloatに変換して返す.
-
-* 1997/10/25 立花.
-*	新規作成.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は、double から float への縮小で FLOAT を呼び出
-*	すようにした.
+*	long doubleをfloatに変換して返す。
 
 	.include	fefunc.mac
 

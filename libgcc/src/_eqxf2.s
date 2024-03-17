@@ -1,12 +1,8 @@
 	.title	libgcc.a(_eqxf2.o)
 
 * int __eqxf2 (long double, long double);
-*	long double同士を比較し、等しいか否かの真偽値をintで返す.
-*	0なら真、1なら偽.
-
-* 1997/11/11 立花.
-*	新規作成.
-
+*	long double同士を比較し、等しいか否かの真偽値をintで返す。
+*	0なら真、1なら偽。
 
 	.xref	___cmpxf2
 

@@ -1,11 +1,7 @@
 	.title	libgcc.a(_eqdf2.o)
 
 * int __eqdf2 (double, double);
-*	double同士を比較し、等しくないか否かの真偽値をintで返す.
-
-* 1997/10/24 立花.
-*	高速化.
-
+*	double同士を比較し、等しくないか否かの真偽値をintで返す。
 
 	.xref	___cmpdf2
 

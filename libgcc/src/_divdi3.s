@@ -1,21 +1,11 @@
 	.title	libgcc.a(_divdi3.o)
 
 * long long int __divdi3 (long long int, long long int);
-*	long long int同士を除算し、商をlong long intで返す.
+*	long long int同士を除算し、商をlong long intで返す。
 
 * unsigned long long int __udivdi3 (ull int, ull int);
 *	unsigned long long int同士を除算し、商をunsigned long long int
-*	で返す.
-
-
-* 1997/10/24 立花.
-*	_udivdi3.s を統合.
-*	libgnu-1.50p2 divdi3.s のコードに入れ換えた.
-
-* 1998/11/13 立花.
-*	USE_FLOAT 定義時は __udivsi3() ではなく FLOAT を呼び出すようにし
-*	た.
-
+*	で返す。
 
 	.include	fefunc.mac
 

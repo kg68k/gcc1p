@@ -1,11 +1,7 @@
 	.title	libgcc.a(_modsi3.o)
 
 * int __modsi3 (int, int);
-*	signed int 同士を除算し、余りを signed int で返す.
-
-* 1998/10/29 立花.
-*	新規作成. USE_FLOAT 定義時のみ FLOAT を呼び出す. 未定義なら空の
-*	ファイルとなる.
+*	signed int 同士を除算し、余りを signed int で返す。
 
 	.include	fefunc.mac
 

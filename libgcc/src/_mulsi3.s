@@ -1,16 +1,7 @@
 	.title	libgcc.a(_mulsi3.o)
 
 * int __mulsi3 (int, int);
-*	int 同士を乗算して、積を int で返す.
-
-* 1997/10/24 立花.
-*	libgnu-1.50p2 mulsi3.s のコードに入れ換えた.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は FLOAT を呼び出すようにした.
-
-* 1998/12/15 立花.
-*	USE_FLOAT を FORCE_USE_FLOAT に変更.
+*	int 同士を乗算して、積を int で返す。
 
 	.include	fefunc.mac
 

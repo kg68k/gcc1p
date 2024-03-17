@@ -1,11 +1,7 @@
 	.title	libgcc.a(_cmpsf2.o)
 
 * int __cmpsf2 (float, float);
-*	float同士を比較し、大小関係をintで返す.
-
-* 1997/11/11 立花.
-*	_lesf2.sに含まれていたルーチンを削除し、独立して新規作成.
-
+*	float同士を比較し、大小関係をintで返す。
 
 	.cpu	68000
 

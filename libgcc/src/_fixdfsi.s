@@ -1,13 +1,7 @@
 	.title	libgcc.a(_fixdfsi.o)
 
 * int __fixdfsi (double);
-*	doubleをintに変換して返す.
-
-* 1997/10/27 立花.
-*	高速化.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は FLOAT を呼び出すようにした.
+*	doubleをintに変換して返す。
 
 	.include	fefunc.mac
 

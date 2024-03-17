@@ -1,11 +1,7 @@
 	.title	libgcc.a(_moddi3.o)
 
 * long long int __moddi3 (long long int, long long int);
-*	long long int同士を除算し、余りをlong long intで返す.
-
-* 1997/10/24 立花.
-*	_umoddi3.sを統合し、libgnu-1.50p2 moddi3.sのコードに入れ換えた.
-*	省サイズ、高速化. 0 mod 0は0除算エラーとして扱うようにした.
+*	long long int同士を除算し、余りをlong long intで返す。
 
 	.cpu	68000
 

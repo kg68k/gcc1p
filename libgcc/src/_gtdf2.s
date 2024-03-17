@@ -1,10 +1,7 @@
 	.title	libgcc.a(_gtdf2.o)
 
 * int __gedf2 (double, double);
-*	double同士を比較し、より大きいか否かの真偽値をintで返す.
-
-* 1997/10/23 立花.
-*	高速化.
+*	double同士を比較し、より大きいか否かの真偽値をintで返す。
 
 	.xref	___cmpdf2
 

@@ -1,18 +1,9 @@
 	.title	libgcc.a(_fixunsxfdi.o)
 
 * long long int __fixunsxfdi (long double);
-*	long doubleをlong long intに変換して返す.
+*	long doubleをlong long intに変換して返す。
 *	返値の型はsignedだが、実際にはunsignedを返す機能の関数であり
-*	引数が負数の場合は0を返す.
-
-* 1997/10/24 立花.
-*	long doubleの値を修正し、命令に埋め込むようにした.
-*	省サイズ、高速化.
-
-* 1997/11/11 立花.
-*	ショートアドレッシングの修正.
-*	省サイズ、高速化.
-
+*	引数が負数の場合は0を返す。
 
 	.xref	___ltxf2,___negxf2
 	.xref	___divxf3,___addxf3,___subxf3

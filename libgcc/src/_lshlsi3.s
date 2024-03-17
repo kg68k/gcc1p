@@ -1,13 +1,10 @@
 	.title	libgcc.a(_lshlsi3.o)
 
 * int __ashlsi3 (int, int);
-*	int を算術左シフトして int で返す.
+*	int を算術左シフトして int で返す。
 
 * int __lshlsi3 (int, int);
-*	int を論理左シフトして int で返す.
-
-* 1998/10/26 立花.
-* _ashlsi3.s を統合.
+*	int を論理左シフトして int で返す。
 
 	.cpu	68000
 

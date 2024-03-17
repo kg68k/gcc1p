@@ -1,8 +1,7 @@
 	.title	libgcc.a(_varargs.o)
 
 * void* __builtin_saveregs ();
-*	呼び出されることはない筈なのでアボートする.
-
+*	呼び出されることはない筈なのでアボートする。
 
 	.xref	_abort
 

@@ -1,14 +1,7 @@
 	.title	libgcc.a(_fixsfdi.o)
 
 * long long int __fixdfdi (float);
-*	float を long long int に変換して返す.
-
-* 1997/10/25 立花.
-*	__extendsfdf2() と __fixdfdi() を使用して変換するようにした.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は、float から double への拡張で FLOAT を呼び出
-*	すようにした.
+*	float を long long int に変換して返す。
 
 	.include	fefunc.mac
 

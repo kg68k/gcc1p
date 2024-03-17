@@ -1,11 +1,7 @@
 	.title	libgcc.a(_fixxfsi.o)
 
 * int __fixxfsi (long double);
-*	long doubleをintに変換して返す.
-
-* 1997/11/11 立花.
-*	新規作成.
-
+*	long doubleをintに変換して返す。
 
 	.cpu	68000
 

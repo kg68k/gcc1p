@@ -1,7 +1,7 @@
 	.title	libgcc.a(_lshrdi3.o)
 
 * long long int __lshrdi3 (long long int, int);
-*	long long intを論理右シフトしてlong long intで返す.
+*	long long intを論理右シフトしてlong long intで返す。
 
 	.cpu	68000
 

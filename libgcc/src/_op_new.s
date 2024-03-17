@@ -1,15 +1,10 @@
 	.title	libgcc.a(_op_new.o)
 
 * void* __builtin_new (sizet);
-*	new演算子によるメモリ確保を行う.
+*	new演算子によるメモリ確保を行う。
 
 * void* __builtin_new (size_t);
-*	new []演算子によるメモリ確保を行う.
-
-* 1997/10/27 立花.
-*	_op_vnew.sを統合.
-*	高速化.
-
+*	new []演算子によるメモリ確保を行う。
 
 	.xref	___new_handler
 	.xref	_malloc

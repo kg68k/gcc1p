@@ -1,7 +1,7 @@
 	.title	libgcc.a(_shtab.o)
 
 * unsigned int __shtab[];
-*	表. libgccからは使用していない.
+*	表。libgccからは使用していない。
 
 	.cpu	68000
 

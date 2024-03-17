@@ -1,13 +1,7 @@
 	.title	libgcc.a(_floatsisf.o)
 
 * float __floatsisf (int);
-*	intをfloatに変換して返す.
-
-* 1997/10/23 立花.
-*	自前で処理するルーチンを書き下した.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は FLOAT を呼び出すようにした.
+*	intをfloatに変換して返す。
 
 	.include	fefunc.mac
 

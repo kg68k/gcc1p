@@ -1,11 +1,7 @@
 	.title	libgcc.a(_negdf2.o)
 
 * double __negdf2 (double);
-*	doubleを符号反転してdoubleで返す.
-
-* 1997/10/24 立花.
-*	+0.0を-0.0にして返す不具合を修正.
-
+*	doubleを符号反転してdoubleで返す。
 
 	.cpu	68000
 

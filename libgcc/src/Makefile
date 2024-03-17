@@ -2,11 +2,10 @@
 
 DEFS	= -sUSE_FLOAT
 LIBGCC	= libgcc.a
-LIBGNU	= libgnu.a
 ORIG_LIBGNU = /usr/local/lib/libgnu.a
 
 AS	= has
-ASFLAGS	= -1 -c4 -k $(DEFS)
+ASFLAGS	= -1 -c3 -k $(DEFS)
 AR_C	= oar -c
 AR_X	= oar -x
 
@@ -116,28 +115,14 @@ OBJS2	= adddi3.o \
 	  patchlevel.o
 
 all:  $(LIBGCC)
-both: $(LIBGCC) $(LIBGNU)
 
-$(LIBGCC): $(OBJS) making.libgcc
-	$(AR_C) $@ $(OBJS)
-
-$(LIBGNU): $(OBJS) making.libgnu libgnu_objs
+$(LIBGCC): $(OBJS) libgnu_objs
 	$(AR_C) $@ $(OBJS) $(addprefix libgnu_objs/,$(OBJS2))
-
-making.libgcc:
-	rm -f __version.o making.libgnu
-	$(AS) $(ASFLAGS) __version.s
-	touch $@
-
-making.libgnu:
-	rm -f __version.o making.libgcc
-	$(AS) $(ASFLAGS) __version.s -sLIBGNU
-	touch $@
 
 libgnu_objs:
 	(mkdir $@; cd $@; $(AR_X) $(ORIG_LIBGNU) $(OBJS2))
 
 clean:
-	rm -f *.a *.o making.lib*
+	rm -f *.a *.o
 
 # EOF

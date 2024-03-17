@@ -1,11 +1,7 @@
 	.title	libgcc.a(_eprintf.o)
 
 * void __eprintf (const char*, const char*, int, const char*);
-*	`assert'マクロで使用される.
-
-* 1997/10/24 立花.
-*	省サイズ、高速化.
-
+*	`assert'マクロで使用される。
 
 	.xref	__iob
 	.xref	_fprintf,_fflush

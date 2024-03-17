@@ -2,10 +2,6 @@
 
 * void __transfer_from_trampoline ();
 *	ライブラリで使用?
-*	無駄なrtsがある.
-
-* 1997/10/24 立花.
-*	無駄なrtsを削除.
 
 	.cpu	68000
 

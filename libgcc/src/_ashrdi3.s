@@ -1,7 +1,7 @@
 	.title	libgcc.a(_ashrdi3.o)
 
 * long long int __ashrdi3 (long long int, int);
-*	long long intを算術右シフトしてlong long intで返す.
+*	long long intを算術右シフトしてlong long intで返す。
 
 	.cpu	68000
 

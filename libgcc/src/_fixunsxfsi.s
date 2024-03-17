@@ -1,12 +1,7 @@
 	.title	libgcc.a(_fixunsxfsi.o)
 
 * unsigned int __fixunsxfdi (long double);
-*	long doubleをunsigned intに変換して返す.
-
-* 1997/10/24 立花.
-*	long doubleの値を修正し、命令に埋め込むようにした.
-*	省サイズ、高速化.
-
+*	long doubleをunsigned intに変換して返す。
 
 	.xref	___gexf2
 	.xref	___fixxfsi

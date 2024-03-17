@@ -1,15 +1,7 @@
 	.title	libgcc.a(_fixxfdi.o)
 
 * long long int __fixxfdi (long double);
-*	long doubleをlong long intに変換して返す.
-
-* 1997/10/24 立花.
-*	long doubleの値を命令に埋め込むようにした.
-*	省サイズ、高速化.
-
-* 1997/11/12 立花.
-*	ショートアドレッシングの修正.
-
+*	long doubleをlong long intに変換して返す。
 
 	.xref	___ltxf2,___negxf2
 	.xref	___fixunsxfdi

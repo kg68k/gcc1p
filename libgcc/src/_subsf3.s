@@ -1,12 +1,7 @@
 	.title	libgcc.a(_addsf3.o)
 
 * float __subsf3 (float, float);
-*	float 同士を減算して float で返す.
-
-* 1998/10/29 立花.
-*	新規作成. USE_FLOAT 定義時のみ FLOAT を呼び出す. 未定義なら空の
-*	ファイルとなる.
-*	libgnu versin 1.46 fpack.lzh::_subsf3.s と同じ.
+*	float 同士を減算して float で返す。
 
 	.include	fefunc.mac
 

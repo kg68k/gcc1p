@@ -1,13 +1,9 @@
 	.title	libgcc.a(_fixunsdfdi.o)
 
 * long long int __fixunsdfdi (double);
-*	doubleをlong long intに変換して返す.
+*	doubleをlong long intに変換して返す。
 *	返値の型はsignedだが、実際にはunsignedを返す機能の関数であり
-*	引数が負数の場合は0を返す.
-
-* 1997/10/25 立花.
-*	libgnu-1.50p2 fxunsdfdi.sのコードに入れ換えた.
-*	一部のルーチンの移動. 高速化.
+*	引数が負数の場合は0を返す。
 
 	.cpu	68000
 

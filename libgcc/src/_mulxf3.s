@@ -1,12 +1,7 @@
 	.title	libgcc.a(_mulxf3.o)
 
 * long double __mulxf3 (long double, long double);
-*	long double同士を乗算して積を返す.
-
-* 1997/11/11 立花.
-*	has version 3.09 fexpr.s(xmul)のコードを使用し、
-*	若干修正して作成.
-
+*	long double同士を乗算して積を返す。
 
 	.cpu	68000
 

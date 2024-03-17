@@ -1,11 +1,7 @@
 	.title	libgcc.a(_extenddfxf2.o)
 
 * long double __extenddfxf2 (double);
-*	doubleをlong doubleに変換して返す.
-
-* 1997/10/25 立花.
-*	has version 3.09 fexpr.s(dotx/normalize)のコードを使用し、
-*	若干修正して作成.
+*	doubleをlong doubleに変換して返す。
 
 	.cpu	68000
 

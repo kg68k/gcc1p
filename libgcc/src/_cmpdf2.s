@@ -1,11 +1,7 @@
 	.title	libgcc.a(_cmpdf2.o)
 
 * int __cmpdf2 (double, double);
-*	double同士を比較し、大小関係をintで返す.
-
-* 1997/11/11 立花.
-*	新規作成.
-
+*	double同士を比較し、大小関係をintで返す。
 
 	.cpu	68000
 
@@ -18,7 +14,6 @@ dval2l:	.ds.l	1
 	.text
 
 __f_cmpdf2::
-** これで正しいのか自信がない(^^;
 **	.cpu	68020
 **	fmove.d	(dval1h,sp),fp0
 **	fsub.d	(dval2h,sp),fp0

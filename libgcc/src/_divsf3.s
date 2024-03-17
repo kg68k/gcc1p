@@ -1,14 +1,7 @@
 	.title	libgcc.a(_divsf3.o)
 
 * float __divsf3 (float, float);
-*	float 同士を除算し、商を float で返す.
-
-* 1997/10/23 立花.
-*	returnnan を移動. NaN のロードを高速化.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は FLOAT を呼び出すようにした.
-*	libgnu versin 1.46 fpack.lzh::_divsf3.s と同じ.
+*	float 同士を除算し、商を float で返す。
 
 	.include	fefunc.mac
 

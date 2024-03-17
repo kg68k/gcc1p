@@ -1,11 +1,7 @@
 	.title	libgcc.a(_fixunssfsi.o)
 
 * unsigned int __fixunssfsi (float);
-*	floatをunsigned intに変換して返す.
-
-* 1997/11/12 立花.
-*	自前で処理するルーチンを書き下した.
-
+*	floatをunsigned intに変換して返す。
 
 	.cpu	68000
 

@@ -1,13 +1,10 @@
 	.title	libgcc.a(_lshldi3.o)
 
 * long long int __ashldi3 (long long int, int);
-*	long long int を算術左シフトして long long int で返す.
+*	long long int を算術左シフトして long long int で返す。
 
 * long long int __lshldi3 (long long int, int);
-*	long long int を論理左シフトして long long int で返す.
-
-* 1998/10/26 立花.
-* _ashldi3.s を統合.
+*	long long int を論理左シフトして long long int で返す。
 
 	.cpu	68000
 

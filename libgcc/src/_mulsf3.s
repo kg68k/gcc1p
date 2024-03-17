@@ -1,14 +1,7 @@
 	.title	libgcc.a(_mulsf3.o)
 
 * float __mulsf3 (float, float);
-*	float同士を乗算してfloatで返す.
-
-* 1997/10/23 立花.
-*	無駄なコードを削除. 一部のルーチンを移動.
-
-* 1998/10/28 立花.
-*	USE_FLOAT 定義時は FLOAT を呼び出すようにした.
-*	libgnu versin 1.46 fpack.lzh::_mulsf3.s と同じ.
+*	float同士を乗算してfloatで返す。
 
 	.include	fefunc.mac
 
