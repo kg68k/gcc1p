@@ -41,7 +41,7 @@ ___fixdfdi::
 	sub	#$3ff0,d2
 	bmi	returnzero
 
-	move	d0,a2
+	movea.l	d0,a2
 	and	#$000f,d0
 	or	#$0010,d0
 	swap	d0

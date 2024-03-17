@@ -2,12 +2,10 @@
 
 DEFS	= -sUSE_FLOAT
 LIBGCC	= libgcc.a
-ORIG_LIBGNU = /usr/local/lib/libgnu.a
 
-AS	= has
-ASFLAGS	= -1 -c3 -k $(DEFS)
+AS	= has060
+ASFLAGS	= -1 -c3 $(DEFS)
 AR_C	= oar -c
-AR_X	= oar -x
 
 SRCS	= \
 	_adddf3.s \
@@ -115,7 +113,7 @@ SRCS	= \
 
 OBJS	= $(SRCS:.s=.o)
 
-all:  $(LIBGCC)
+all: $(LIBGCC)
 
 $(LIBGCC): $(OBJS)
 	$(AR_C) $@ $(OBJS)

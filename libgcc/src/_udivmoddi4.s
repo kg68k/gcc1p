@@ -522,12 +522,13 @@ L000414:
 	sub.l	d0,d5
 	movea.l	d5,a6
 	bne	L00046c
+	suba.l	a1,a1		;q0 = 0
 	cmpa.l	($28,sp),a3
 	bhi	L00043a
 	cmpa.l	($24,sp),a5
 	bcs	L000452
 L00043a:
-	movea	#1,a1
+	addq.l	#1,a1		;q0 = 1
 	move.l	a3,d5
 	move.l	a5,d6
 	move.l	($28,sp),d7
@@ -538,7 +539,7 @@ L00043a:
 	bra	L000454
 
 L000452:
-	suba.l	a1,a1
+**	suba.l	a1,a1		;q0 = 0
 L000454:
 	clr.l	($38,sp)
 	tst.l	($64,sp)
