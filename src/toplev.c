@@ -2600,9 +2600,6 @@ main (argc, argv, envp)
   int arg_error = 0;
 
 #ifdef __human68k__
-#ifndef __LIBC__
-  allmem ();
-#endif
   {
     extern (*trap_14) ();
     extern trap14 ();

@@ -1039,10 +1039,6 @@ execute ()
       extern int spawnv (), spawnvp ();
       char *string = commands[i].argv[0];
       char *s, *p, **a, *v[128];
-#ifndef __LIBC__
-      char indirect_file_buf[256], *indirect_file_p;
-      int program_is_cash = 0;
-#endif
       int program_is_cc1=0;
       int program_is_as =0;
       FILE *fp;
@@ -1062,9 +1058,6 @@ execute ()
 	program_is_as = 1;
       if (strcmp (p, getenv ("GCC_LINK") ? : "hlk") == 0)
 	{
-#ifndef __LIBC__
-	  program_is_cash = 1;
-#endif
 	  no_delete_temp = 1;
 	  for (a = commands[i].argv+1; *a; a++)
 	    {
@@ -1080,11 +1073,7 @@ execute ()
 	}
       for (a = commands[i].argv, j = -1; *a;)
 	{
-#if defined(__human68k__) && !defined(__LIBC__)
-	  j += strlen(s = *a++) + 1;
-#else
 	  s = *a++;
-#endif
 	  if (vflag)
 	    {
 	      fprintf (stdout, "%s", s);
@@ -1097,66 +1086,7 @@ execute ()
 	  fprintf (stdout, "\n");
 	  fflush (stdout);
 	}
-#if defined(__human68k__) && !defined(__LIBC__)
-      if (j >= 240)
 	{
-	  /* create indirect file */
-	  sprintf (indirect_file_buf, "-+-+-%s.idf", temp_filename);
-	  indirect_file_p = &indirect_file_buf[5];
-	  v[0] = string;
-	  a = commands[i].argv+1;
-	  if (program_is_cash)
-	    {
-	      j = 1;
-	      v[j++] = "-i"; /* "-i "; */
-	      v[j++] = indirect_file_p;
-	      v[j] = 0;
-	    }
-#ifndef NO_CSHWILD
-	  else if (strcmp (p, "gcc_cc1") == 0 || strcmp (p, "gcc_cpp") == 0)
-	    {
-	      v[1] = *a++;
-	      v[2] = indirect_file_buf;
-	      v[3] = 0;
-	    }
-#endif
-	  else
-	    goto normal_execute;
-	  if ((fp = fopen (indirect_file_p, "w")) == 0)
-	    fatal ("Can't create Indirect File %s", indirect_file_p);
-#ifdef DEBUG
-	  {
-	    char *vv;
-	    for(printf ("Execute:"), vv = v; *vv; vv++)
-	      {
-		printf (" %s", *vv);
-		fflush (stdout);
-	      }
-	    for (printf ("\nIndirect:\n"), vv = a; *vv; vv++)
-	      {
-		printf ("\t%s\n", *vv);
-		fflush (stdout);
-	      }
-	  }
-#endif
-	  for (; *a; a++)
-	    {
-	      if (program_is_cash && **a == '-' && LK_SWITCH_TAKES_ARG(*(*a+1)))
-		fprintf (fp, "%s ", *a++);
-	      fprintf (fp, "%s\n", *a);
-	    }
-	  fclose (fp);
-	  if (string != commands[i].prog)
-	    ret_code = spawnv (P_WAIT, string, v);
-	  else
-	    ret_code = spawnvp (P_WAIT, string, v);
-/*	  if (!program_is_cc1) */
-	    unlink (indirect_file_p);
-	}
-      else
-#endif /* defined(__human68k__) && !defined(__LIBC__) */
-	{
-	normal_execute:
 	  if (program_is_as)
 	    {
 	      char *tem;
@@ -2432,52 +2362,30 @@ save_string (s, len)
 pfatal_with_name (name)
      char *name;
 {
-  extern int errno, sys_nerr;
+  extern int errno;
   char *s;
 
-#ifdef __LIBC__
-  if (++errno < sys_nerr)
-#else
-  if (errno < sys_nerr)
-#endif
-    s = concat ("%s: ", sys_errlist[errno], "");
-  else
-    s = "cannot open %s";
+  s = concat ("%s: ", strerror (errno), "");
   fatal (s, name);
 }
 
 perror_with_name (name)
      char *name;
 {
-  extern int errno, sys_nerr;
+  extern int errno;
   char *s;
 
-#ifdef __LIBC__
-  if (++errno < sys_nerr)
-#else
-  if (errno < sys_nerr)
-#endif
-    s = concat ("%s: ", sys_errlist[errno], "");
-  else
-    s = "cannot open %s";
+  s = concat ("%s: ", strerror (errno), "");
   error (s, name);
 }
 
 perror_exec (name)
      char *name;
 {
-  extern int errno, sys_nerr;
+  extern int errno;
   char *s;
 
-#ifdef __LIBC__
-  if (++errno < sys_nerr)
-#else
-  if (errno < sys_nerr)
-#endif
-    s = concat ("installation problem, cannot exec %s: ",
-		sys_errlist[errno], "");
-  else
-    s = "installation problem, cannot exec %s";
+  s = concat ("installation problem, cannot exec %s: ", strerror (errno), "");
   error (s, name);
 }
 

@@ -629,9 +629,6 @@ main (argc, argv)
   }
 #endif /* RLIMIT_STACK defined */
 #ifdef __human68k__
-#if !defined (HUMAN68K_ON_BSD_DEBUG) && !defined (__LIBC__)
-  allmem();
-#endif /* not DEBUG */
   {
     extern (*trap_14)();
     extern trap14();
@@ -5165,8 +5162,8 @@ error_from_errno (name)
 {
   int i;
   FILE_BUF *ip = NULL;
-  extern int errno, sys_nerr;
-  extern char *sys_errlist[];
+  extern int errno;
+  const char* errstr = strerror (errno);
 
   for (i = indepth; i >= 0; i--)
     if (instack[i].fname != NULL) {
@@ -5180,22 +5177,14 @@ error_from_errno (name)
     {
       if (ip != NULL)
         fprintf (tagfile, fmt_error, ip->fname, ip->lineno);
-      if (errno < sys_nerr)
-        fprintf (tagfile, "%s: %s\n", name, sys_errlist[errno]);
-      else
-        fprintf (tagfile, "%s:config.sysでFILES数が不足か\n"
-        "Human68Kで使えないfilenameが指定されています\n", name);
+      fprintf (tagfile, "%s: %s\n", name, errstr);
     }
 #endif
 
   if (ip != NULL)
     fprintf (gcc_err_file, fmt_error, ip->fname, ip->lineno);
+  fprintf (gcc_err_file, "%s: %s\n", name, errstr);
 
-  if (errno < sys_nerr)
-    fprintf (gcc_err_file, "%s: %s\n", name, sys_errlist[errno]);
-  else
-    fprintf (tagfile, "%s:config.sysでFILES数が不足か\n"
-    "Human68Kで使えないfilenameが指定されています\n", name);
   errors++;
   return 0;
 }
@@ -5873,14 +5862,11 @@ void
 perror_with_name (name)
      char *name;
 {
-  extern int errno, sys_nerr;
-  extern char *sys_errlist[];
+  extern int errno;
+  const char* errstr = strerror (errno);
 
   fprintf (gcc_err_file, "%s: Error :", progname);
-  if (errno < sys_nerr)
-    fprintf (gcc_err_file, "%s: %s\n", name, sys_errlist[errno]);
-  else
-    fprintf (gcc_err_file, "%s: undocumented I/O error\n", name);
+  fprintf (gcc_err_file, "%s: %s\n", name, errstr);
   errors++;
 }
 
