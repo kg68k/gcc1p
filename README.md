@@ -6,6 +6,14 @@ gcc version 1.30 Tool#2(X680x0)の改造版です。
 
 ## 仕様
 
+### 追加された機能
+* -Oオプションに0～2のレベルを指定できます。
+  * -O0 ... 最適化を抑止します。
+  * -O  ... 通常の最適化を行います。互換性のため、環境変数`GCC_OPTION1`で指定した最適化は変化しません。
+  * -O1 ... -Oと同じ。ただし`GCC_OPTION1`で指定した最適化は無効になります。
+  * -O2 ... -Oに加え、-fstrength-reduce -fomit-frame-pointer -finline-functions -fforce-mem
+            が指定されます。また`GCC_OPTION1=P`の最適化(pea 0.w → clr.l -(sp))が有効になります。
+
 ### 削除された機能
 
 * GVRAM、TVRAMの使用。

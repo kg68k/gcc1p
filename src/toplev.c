@@ -2198,6 +2198,27 @@ static void x68_getenv() {
   }
 }
 
+// Parse the -O option.
+static void parseOptionO(const char* s) {
+  const char c = s[1];  // The character after the 'O'
+  const int level = (c == '0') ? 0 : (c >= '2') ? 2 : 1;
+
+  optimize = (level >= 1);
+  obey_regdecls = (level == 0);
+
+  // 互換性のため、-Oのみの場合は環境変数GCC_OPTION1の値を上書きしない
+  if (c) {
+    const int lv2 = (level >= 2);
+
+    flag_omit_frame_pointer = lv2;
+    flag_inline_functions = lv2;
+    flag_strength_reduce = lv2;
+    flag_force_mem = lv2;
+    flag_slow = lv2;
+    // -fforce-addrはあまり効果が感じられないので有効にしない
+  }
+}
+
 /* Entry point of cc1.  Decode command args, then call compile_file.
    Exit code is 35 if can't open files, 34 if fatal error,
    33 if had nonfatal errors, else success.  */
@@ -2384,8 +2405,9 @@ dump_redo:
         ;
       else if (!strcmp(str, "opt"))
         optimize = 1, obey_regdecls = 0;
-      else if (str[0] == 'O')
-        optimize = 1, obey_regdecls = 0;
+      else if (str[0] == 'O') {
+        parseOptionO(str);
+      }
       else if (!strcmp(str, "pedantic"))
         pedantic = 1;
       else if (lang_decode_option(argv[i]))

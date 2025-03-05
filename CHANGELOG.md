@@ -1,4 +1,9 @@
-# patchlevel 6 (2024-03-17)
+# patchlevel 7
+
+* 最適化を制御するオプション-O0、-O1、-O2を追加しました。
+
+
+# patchlevel 6  (2024-03-17)
 
 * 環境変数`GCC_LIB`、`GCC_NO_XCLIB`、`GCC_XCLIB`を削除しました。
   ライブラリファイルのファイル名形式は常に`lib*.a`となります。
