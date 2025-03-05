@@ -326,10 +326,6 @@ int flag_strict_align;
 /* Nonzero means Stack check Code generate */
 int flag_stack_check;
 int flag_all_short;
-#if 0
-int flag_omit_loop;
-int flag_extract_loop;
-#endif
 int flag_text;
 int flag_remote;
 int flag_slow;
@@ -412,18 +408,7 @@ struct {
      {"ms-dos", &flag_dos, 1},
      {"fppp", &flag_fppp, 1},
      {"pic", &flag_pic, 1},
-     {"text-report", &flag_text_report, 1}
-#if 0
-  ,
-  {
-    "omit-loop", &flag_omit_loop, 1
-  }
-  ,
-  {
-    "extract-for", &flag_extract_loop, 1
-  }
-#endif
-     ,
+     {"text-report", &flag_text_report, 1},
      {"all-text", &flag_text, 1},
      {"all-remote", &flag_remote, 1},
      {"scd", &flag_debug, 1},
@@ -1296,9 +1281,6 @@ static void compile_file(name) char *name;
   ASM_FILE_START(asm_out_file);
 
 #ifdef __human68k__
-#if 0
-  fprintf (asm_out_file, "RUNS_HUMAN_VERSION\tequ\t%d\n", (_dos_vernum () & 0xff00) >> 8);
-#endif
   if (TARGET_68040)
     fprintf(asm_out_file, "\t.cpu 68040\n");
   else if (TARGET_68020)
