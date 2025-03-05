@@ -16,6 +16,7 @@ T = pkgtmp
 GCC_ZIP = gcc130p.zip
 
 FILES = bin/gcc.x bin/gcc_cc1.x bin/gcc_cpp.x lib/libgnu.a \
+	COPYING gcc_help.txt \
 	CHANGELOG.txt README.txt libgcc_CHANGELOG.txt libgcc_README.txt
 
 .PHONY: all archive directories
@@ -44,6 +45,12 @@ $(T)/bin/gcc_cpp.x: cpp.x
 
 $(T)/lib/libgnu.a: ../libgcc/build/libgcc.a
 	$(CP) $^ $@
+
+$(T)/COPYING: $(SRC_DIR)/../COPYING
+	$(CP) $^ $@
+
+$(T)/gcc_help.txt: $(SRC_DIR)/../gcc_help.txt
+	$(U8TOSJ) < $^ >! $@
 
 $(T)/CHANGELOG.txt: $(SRC_DIR)/../CHANGELOG.md
 	$(U8TOSJ) < $^ >! $@

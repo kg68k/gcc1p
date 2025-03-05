@@ -1,6 +1,7 @@
 # patchlevel 7
 
 * 最適化を制御するオプション-O0、-O1、-O2を追加しました。
+* アーカイブにCOPYING、gcc_help.txtが含まれない不具合を修正。
 
 
 # patchlevel 6  (2024-03-17)
