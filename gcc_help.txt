@@ -1,3 +1,6 @@
+ gcc1p: gcc version 1.30 Tool#2(X680x0) patchlevel 7
+ Copyright (C) 2025 TcbnErik
+
  Copyright (C) 1987, 1988, 1989, 1990, 1991, 1992 Free Software Foundation, Inc.
  GNU CC is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
