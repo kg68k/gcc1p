@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with GNU CC; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-
 /* #defines that need visibility everywhere.  */
 #define FALSE 0
 #define TRUE 1
@@ -40,14 +39,17 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /* If compiled with GNU C, use the built-in alloca */
 #ifdef __GNUC__
 #if !(GNU_C_VERSION == 2)
-#define alloca(SIZE)					\
-({ extern int *_SSTA; extern volatile stack_over();	\
-  int _stpos; int _size = (SIZE);			\
-  asm ("move.l sp,%0":"=g"(_stpos):"0"(_stpos));	\
-  _stpos -= _size;					\
-  if ((unsigned) _stpos < (unsigned) _SSTA)		\
-    stack_over (_size);					\
-  __builtin_alloca (_size);})
+#define alloca(SIZE)                                                \
+  ({                                                                \
+    extern int *_SSTA;                                              \
+    extern volatile stack_over();                                   \
+    int stpos;                                                      \
+    int alloca_size = (SIZE);                                       \
+    asm("move.l sp,%0" : "=g"(stpos));                              \
+    stpos -= alloca_size;                                           \
+    if ((unsigned)stpos < (unsigned)_SSTA) stack_over(alloca_size); \
+    __builtin_alloca(alloca_size);                                  \
+  })
 #else
 #define alloca __builtin_alloca
 #define index strchr

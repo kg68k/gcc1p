@@ -139,6 +139,7 @@ options. gcc handles options '-cpp-stack=N', '-cc1-stack=N' are available.
 
 */
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #ifdef __human68k__
@@ -148,7 +149,6 @@ options. gcc handles options '-cpp-stack=N', '-cc1-stack=N' are available.
 #include <stdlib.h>
 #include <sys/stat.h>
 #define __DOS_INLINE__
-#include <jctype.h>
 #include <sys/dos.h>
 #undef stderr
 #define stderr stdout
@@ -159,7 +159,6 @@ options. gcc handles options '-cpp-stack=N', '-cc1-stack=N' are available.
 #endif
 
 #include "config.h"
-#include "gvarargs.h"
 #include "obstack.h"
 
 #ifdef USG
@@ -173,10 +172,6 @@ options. gcc handles options '-cpp-stack=N', '-cc1-stack=N' are available.
 #endif /* USG */
 
 #ifdef __human68k__
-#define R_OK 4
-#define W_OK 2
-#define X_OK 0
-
 #define INITIAL_STACK_SIZE 128 * 1024 /* default stack size */
 #define MAX_SYMBOLS 0x7fff            /* as.x max symbols */
 
@@ -220,7 +215,7 @@ static struct _x68k_option {
 
 #define obstack_chunk_alloc xmalloc
 #define obstack_chunk_free free
-extern int xmalloc();
+static void *xmalloc(int size);
 extern void free();
 
 /* If a stage of compilation returns an exit status >= 1,
@@ -497,6 +492,45 @@ char *standard_startfile_prefix_1 = "/lib/";
 char *standard_startfile_prefix_2 = "/usr/lib/";
 #endif
 
+static void delete_temp_files(void);
+static void perror_with_name(const char *name);
+static void give_switch(int switchnum);
+
+static void printerror(const char *fmt, va_list args) {
+  fprintf(stderr, "%s: ", programname);
+  vfprintf(stderr, fmt, args);
+  fprintf(stderr, "\n");
+}
+
+static void error(const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  printerror(fmt, ap);
+  va_end(ap);
+}
+
+static void fatal(const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  printerror(fmt, ap);
+  va_end(ap);
+
+  delete_temp_files();
+  Myexit(1);
+}
+
+static void *xmalloc(int size) {
+  void *value = malloc(size);
+  if (value == 0) fatal("Virtual memory exhausted");
+  return value;
+}
+
+static void *xrealloc(void *ptr, int size) {
+  void *value = realloc(ptr, size);
+  if (value == 0) fatal("Virtual memory exhausted");
+  return value;
+}
+
 /* Clear out the vector of arguments (after a command is executed).  */
 
 void clear_args() { argbuf_index = 0; }
@@ -592,7 +626,7 @@ int fail_delete;
 
 /* Delete all the temporary files whose names we previously recorded.  */
 
-void delete_temp_files() {
+static void delete_temp_files(void) {
   register struct temp_file *temp;
 #ifdef __human68k__
   extern int n_infiles;
@@ -886,7 +920,7 @@ int execute() {
   int n_commands; /* # of command.  */
   char *string;
 #ifdef __human68k__
-  int ret_code;
+  int ret_code = 0;
 #endif
   struct command {
     char *prog;  /* program name.  */
@@ -957,10 +991,10 @@ int execute() {
 #ifdef __human68k__
     extern int spawnv(), spawnvp();
     char *string = commands[i].argv[0];
-    char *s, *p, **a, *v[128];
+    char *s, *p, **a;
     int program_is_cc1 = 0;
     int program_is_as = 0;
-    FILE *fp;
+
 #define LK_SWITCH_TAKES_ARG(c) \
   ((c) == 'o' || (c) == 'm' || (c) == 'b' || (c) == 'i' || (c) == 't')
     for (p = s = commands[i].argv[0]; *s; s++)
@@ -996,9 +1030,9 @@ int execute() {
     }
     {
       if (program_is_as) {
-        char *tem;
+        char *tem = getenv("GCC_AS");
         no_delete_temp = 1;
-        if (tem = getenv("GCC_AS")) string = tem;
+        if (tem) string = tem;
       }
       if (string != commands[i].prog)
         ret_code = spawnv(P_WAIT, string, commands[i].argv);
@@ -1125,7 +1159,7 @@ char **argv;
   extern char *getenv();
   register int i;
 #ifdef __human68k__
-  int lib_spec = 1, stack;
+  int lib_spec = 1;
 #endif
   n_switches = 0;
   n_infiles = 0;
@@ -1228,7 +1262,7 @@ char **argv;
       if (c == 'B') continue;
       if (c == 'l') {
         register char *x = HUMAN68K_LIB_SPEC;
-        char *lib;
+
         if (*x != 0) {
           x += strlen(x);
           *x++ = ' ';
@@ -1339,7 +1373,7 @@ int inswitch;
   register int c;
   char *string;
 
-  while (c = *p++)
+  while ((c = *p++) != 0)
     /* If substituting a switch, treat all chars like letters.
        Otherwise, NL, SPC, TAB and % are special.  */
     switch (inswitch ? 'a' : c) {
@@ -1699,8 +1733,7 @@ register char *p;
    the vector of switches gcc received, which is `switches'.
    This cannot fail since it never finishes a command line.  */
 
-give_switch(switchnum) int switchnum;
-{
+static void give_switch(int switchnum) {
   do_spec_1("-", 0);
   do_spec_1(switches[switchnum].part1, 1);
   do_spec_1(" ", 0);
@@ -1927,7 +1960,7 @@ char **argv;
     char *fname = alloca(strlen(programname) + 4);
     s = programname;
     d = fname;
-    while (*d++ = *s++);
+    while ((*d++ = *s++) != 0);
     d -= 2;
     *d++ = 'h';
     *d++ = 'l';
@@ -1972,15 +2005,16 @@ char **argv;
 
     /* Figure out which compiler from the file's suffix.  */
     for (cp = compilers; cp->spec; cp++) {
-      if (strlen(cp->suffix) < input_filename_length
 #ifdef __human68k__
-              && (!strcmp(cp->suffix, infiles[i] + input_filename_length -
-                                          strlen(cp->suffix))) ||
+      if ((strlen(cp->suffix) < input_filename_length &&
+           !strcmp(cp->suffix,
+                   infiles[i] + input_filename_length - strlen(cp->suffix))) ||
           (!strcmp(cp->suffix, ".s") &&
            !strcmp(infiles[i] + input_filename_length - 4, ".has")))
 #else
-          && !strcmp(cp->suffix,
-                     infiles[i] + input_filename_length - strlen(cp->suffix)))
+      if (strlen(cp->suffix) < input_filename_length &&
+          !strcmp(cp->suffix,
+                  infiles[i] + input_filename_length - strlen(cp->suffix)))
 #endif
       {
         /* Ok, we found an applicable compiler.  Run its spec.  */
@@ -2068,20 +2102,6 @@ char **argv;
   Myexit(error_count);
 }
 
-xmalloc(size) int size;
-{
-  register int value = (int)malloc(size);
-  if (value == 0) fatal("Virtual memory exhausted");
-  return value;
-}
-
-xrealloc(ptr, size) int ptr, size;
-{
-  register int value = (int)realloc((void *)ptr, size);
-  if (value == 0) fatal("Virtual memory exhausted");
-  return value;
-}
-
 /* Return a newly-allocated string whose contents concatenate those of s1, s2,
  * s3.  */
 
@@ -2110,7 +2130,8 @@ int len;
   return result;
 }
 
-pfatal_with_name(name) char *name;
+#ifndef __human68k__
+static void pfatal_with_name(const char* name)
 {
   extern int errno;
   char *s;
@@ -2118,9 +2139,9 @@ pfatal_with_name(name) char *name;
   s = concat("%s: ", strerror(errno), "");
   fatal(s, name);
 }
+#endif
 
-perror_with_name(name) char *name;
-{
+static void perror_with_name(const char *name) {
   extern int errno;
   char *s;
 
@@ -2128,7 +2149,8 @@ perror_with_name(name) char *name;
   error(s, name);
 }
 
-perror_exec(name) char *name;
+#ifndef __human68k__
+static void perror_exec(const char* name)
 {
   extern int errno;
   char *s;
@@ -2136,59 +2158,12 @@ perror_exec(name) char *name;
   s = concat("installation problem, cannot exec %s: ", strerror(errno), "");
   error(s, name);
 }
+#endif
 
 /* More 'friendly' abort that prints the line and file.
    config.h can #define abort fancy_abort if you like that sort of thing.  */
 
 void fancy_abort() { fatal("Internal gcc abort."); }
-
-#ifdef HAVE_VPRINTF
-
-/* Output an error message and exit */
-
-int fatal(va_alist) va_dcl {
-  va_list ap;
-  char *format;
-
-  va_start(ap);
-  format = va_arg(ap, char *);
-  vfprintf(stderr, format, ap);
-  va_end(ap);
-  fprintf(stderr, "\n");
-  delete_temp_files();
-  Myexit(1);
-}
-
-error(va_alist) va_dcl {
-  va_list ap;
-  char *format;
-
-  va_start(ap);
-  format = va_arg(ap, char *);
-  fprintf(stderr, "%s: ", programname);
-  vfprintf(stderr, format, ap);
-  va_end(ap);
-
-  fprintf(stderr, "\n");
-}
-
-#else /* not HAVE_VPRINTF */
-
-fatal(msg, arg1, arg2) char *msg, *arg1, *arg2;
-{
-  error(msg, arg1, arg2);
-  delete_temp_files(0);
-  Myexit(1);
-}
-
-error(msg, arg1, arg2) char *msg, *arg1, *arg2;
-{
-  fprintf(stderr, "%s: ", programname);
-  fprintf(stderr, msg, arg1, arg2);
-  fprintf(stderr, "\n");
-}
-
-#endif /* not HAVE_VPRINTF */
 
 void validate_all_switches() {
   struct compiler *comp;
@@ -2197,13 +2172,13 @@ void validate_all_switches() {
 
   for (comp = compilers; comp->spec; comp++) {
     p = comp->spec;
-    while (c = *p++)
+    while ((c = *p++) != 0)
       if (c == '%' && *p == '{') /* We have a switch spec.  */
         validate_switches(p + 1);
   }
 
   p = link_spec;
-  while (c = *p++)
+  while ((c = *p++) != 0)
     if (c == '%' && *p == '{') /* We have a switch spec.  */
       validate_switches(p + 1);
 
@@ -2211,49 +2186,49 @@ void validate_all_switches() {
 
 #ifdef ASM_SPEC
   p = ASM_SPEC;
-  while (c = *p++)
+  while ((c = *p++) != 0)
     if (c == '%' && *p == '{') /* We have a switch spec.  */
       validate_switches(p + 1);
 #endif
 
 #ifdef CPP_SPEC
   p = CPP_SPEC;
-  while (c = *p++)
+  while ((c = *p++) != 0)
     if (c == '%' && *p == '{') /* We have a switch spec.  */
       validate_switches(p + 1);
 #endif
 
 #ifdef SIGNED_CHAR_SPEC
   p = SIGNED_CHAR_SPEC;
-  while (c = *p++)
+  while ((c = *p++) != 0)
     if (c == '%' && *p == '{') /* We have a switch spec.  */
       validate_switches(p + 1);
 #endif
 
 #ifdef CC1_SPEC
   p = CC1_SPEC;
-  while (c = *p++)
+  while ((c = *p++) != 0)
     if (c == '%' && *p == '{') /* We have a switch spec.  */
       validate_switches(p + 1);
 #endif
 
 #ifdef LINK_SPEC
   p = LINK_SPEC;
-  while (c = *p++)
+  while ((c = *p++) != 0)
     if (c == '%' && *p == '{') /* We have a switch spec.  */
       validate_switches(p + 1);
 #endif
 
 #ifdef LIB_SPEC
   p = LIB_SPEC;
-  while (c = *p++)
+  while ((c = *p++) != 0)
     if (c == '%' && *p == '{') /* We have a switch spec.  */
       validate_switches(p + 1);
 #endif
 
 #ifdef STARTFILE_SPEC
   p = STARTFILE_SPEC;
-  while (c = *p++)
+  while ((c = *p++) != 0)
     if (c == '%' && *p == '{') /* We have a switch spec.  */
       validate_switches(p + 1);
 #endif
@@ -2309,9 +2284,8 @@ static char *human68k_getenv(s)
 char *s;
 {
   register char **e, *p, *x;
-  register int c;
 
-  for (e = (char **)environ; p = *e; e++) {
+  for (e = (char **)environ; (p = *e) != NULL; e++) {
     for (x = s; lc(*x) == lc(*p); x++, p++);
     if (*x == 0 && *p == '=') return ++p;
   }
@@ -2321,10 +2295,10 @@ char *s;
 static char *human68k_pathinit(p)
 char *p;
 {
-  register char **e, *s, *t, *c;
+  register char **e, *s, *t;
   register int x, y;
   if (*p == '$') {
-    for (e = (char **)environ; s = *e; e++) {
+    for (e = (char **)environ; (s = *e) != NULL; e++) {
       for (t = p + 1; lc(*s) == lc(*t); s++, t++);
       if (*s == '=' && (*t == '\\' || *t == '/')) {
         x = strlen(++s);
