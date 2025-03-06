@@ -1044,8 +1044,7 @@ int execute() {
       no_delete_temp = 0;
       continue;
     } else if (ret_code == -1) {
-      perror("spawnvp");
-      fatal("Program %s: could not execute.", commands[i].prog);
+      fatal("%s の実行に失敗しました: %s", string, strerror(errno));
     } else if (ret_code > 0) {
       char *env;
       if (ret_code == 33 && program_is_cc1 &&
@@ -1075,7 +1074,7 @@ int execute() {
             break;
           }
       }
-      fatal("Program %s exit status %d.", commands[i].prog, ret_code);
+      fatal("%s がエラー終了しました。終了コード: %d", string, ret_code);
     }
 #else
     extern int execv(), execvp();
