@@ -989,7 +989,6 @@ int execute() {
   last_pipe_input = STDIN_FILE_NO;
   for (i = 0; i < n_commands; i++) {
 #ifdef __human68k__
-    extern int spawnv(), spawnvp();
     char *string = commands[i].argv[0];
     char *s, *p, **a;
     int program_is_cc1 = 0;
@@ -1034,10 +1033,7 @@ int execute() {
         no_delete_temp = 1;
         if (tem) string = tem;
       }
-      if (string != commands[i].prog)
-        ret_code = spawnv(P_WAIT, string, commands[i].argv);
-      else
-        ret_code = spawnvp(P_WAIT, string, commands[i].argv);
+      ret_code = spawnvp(P_WAIT, string, commands[i].argv);
     }
     if (ret_code == 0) {
       if (program_is_cc1) unlink(human68k_pathinit("$temp\\gcc.err"));
