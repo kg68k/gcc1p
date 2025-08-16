@@ -4,4 +4,4 @@ char *version_string = "1.30 Tool#2"
 #else
 			"(X680x0)"
 #endif
-			" patchlevel 8";
+			" patchlevel 9.beta-1";

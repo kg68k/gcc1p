@@ -187,7 +187,7 @@ static char *human68k_pathinit();
 
 static short redo_flag;
 
-static struct _x68k_option {
+static struct X68kOption {
   char *option;
   int length;
   int value;
@@ -199,18 +199,28 @@ static struct _x68k_option {
     {"z-stack=", 8, 0x10000},
     {"exit-bell", 9, 0},
 };
-#define X68K_CPP_OPTION (&x68k_option_set[0])
-#define X68K_CC1_OPTION (&x68k_option_set[1])
-#define X68K_ASM_OPTION (&x68k_option_set[2])
-#define X68K_LK_OPTION0 (&x68k_option_set[3])
-#define X68K_LK_OPTION1 (&x68k_option_set[4])
-#define X68K_OPTION_MAX sizeof(x68k_option_set) / sizeof(struct _x68k_option)
-#define X68K_EXIT_BELL (x68k_option_set[5].value)
-#define Myexit(VAL)                                   \
-  do {                                                \
-    if ((VAL) && X68K_EXIT_BELL) fputc('\a', stderr); \
-    exit((VAL));                                      \
+#define X68K_CPP_OPTION x68k_option_set[0]
+#define X68K_CC1_OPTION x68k_option_set[1]
+#define X68K_ASM_OPTION x68k_option_set[2]
+#define X68K_LK_OPTION0 x68k_option_set[3]
+#define X68K_LK_OPTION1 x68k_option_set[4]
+#define X68K_EXIT_BELL x68k_option_set[5]
+
+#define Myexit(VAL)                                         \
+  do {                                                      \
+    if ((VAL) && X68K_EXIT_BELL.value) fputc('\a', stderr); \
+    exit((VAL));                                            \
   } while (0)
+
+static struct X68kOption *getX68kOption(const char *p) {
+  const int len = sizeof(x68k_option_set) / sizeof(x68k_option_set[0]);
+  int i;
+  for (i = 0; i < len; i += 1) {
+    struct X68kOption *x = &x68k_option_set[i];
+    if (strncmp(p, x->option, x->length) == 0) return x;
+  }
+  return NULL;
+}
 #endif /* __human68k__ */
 
 #define obstack_chunk_alloc xmalloc
@@ -1197,24 +1207,18 @@ char **argv;
 #endif
 
         default:
-#ifdef __human68k__
-        {
-          int i;
-          struct _x68k_option *x = x68k_option_set;
+          n_switches++;
 
-          n_switches++;
-          for (i = X68K_OPTION_MAX; i; i--, x++)
-            if (strncmp(p, x->option, x->length) == 0) {
-              if ((i = atoi(p + x->length)) > 0)
-                x->value = i;
-              else if (x == &x68k_option_set[5])
-                x->value = 1;
-              break;
+#ifdef __human68k__
+          {
+            struct X68kOption *x = getX68kOption(p);
+            if (x) {
+              int v = (x == &X68K_EXIT_BELL) ? 1 : atoi(p + x->length);
+              if (v > 0) x->value = v;
             }
-          if (i > 0) break;
-        }
+            break;
+          }
 #endif
-          n_switches++;
 
           if (SWITCH_TAKES_ARG(c) && p[1] == 0)
             i++;
@@ -1602,15 +1606,15 @@ int inswitch;
           case 'X': {
             char xbuf[16];
             if (*p == '1')
-              sprintf(xbuf, "%d", X68K_CC1_OPTION->value);
+              sprintf(xbuf, "%d", X68K_CC1_OPTION.value);
             else if (*p == 'P')
-              sprintf(xbuf, "%d", X68K_CPP_OPTION->value);
+              sprintf(xbuf, "%d", X68K_CPP_OPTION.value);
             else if (*p == 'H')
-              sprintf(xbuf, "%x", X68K_LK_OPTION0->value);
+              sprintf(xbuf, "%x", X68K_LK_OPTION0.value);
             else if (*p == 'T')
-              sprintf(xbuf, "%x", X68K_LK_OPTION1->value);
+              sprintf(xbuf, "%x", X68K_LK_OPTION1.value);
             else
-              sprintf(xbuf, "%d", X68K_ASM_OPTION->value);
+              sprintf(xbuf, "%d", X68K_ASM_OPTION.value);
             p++;
             obstack_grow(&obstack, xbuf, strlen(xbuf));
             arg_going = 1;
@@ -2126,8 +2130,7 @@ int len;
 }
 
 #ifndef __human68k__
-static void pfatal_with_name(const char* name)
-{
+static void pfatal_with_name(const char *name) {
   extern int errno;
   char *s;
 
@@ -2145,8 +2148,7 @@ static void perror_with_name(const char *name) {
 }
 
 #ifndef __human68k__
-static void perror_exec(const char* name)
-{
+static void perror_exec(const char *name) {
   extern int errno;
   char *s;
 
