@@ -35,11 +35,11 @@ $(T)/bin/gcc.x: gcc.x
 	$(CP) $^ $@
 	$(STRIP) $@
 
-$(T)/bin/gcc_cc1.x: cc1.x
+$(T)/bin/gcc_cc1.x: gcc_cc1.x
 	$(CP) $^ $@
 	$(STRIP) $@
 
-$(T)/bin/gcc_cpp.x: cpp.x
+$(T)/bin/gcc_cpp.x: gcc_cpp.x
 	$(CP) $^ $@
 	$(STRIP) $@
 

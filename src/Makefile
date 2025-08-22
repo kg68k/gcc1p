@@ -164,7 +164,7 @@ STAGESTUFF = *.o insn-flags.h insn-config.h insn-codes.h \
  stamp-flags.h stamp-config.h stamp-codes.h \
  stamp-output.c stamp-recog.c stamp-emit.c stamp-extract.c stamp-peep.c \
  genemit.x genoutput.x genrecog.x genextract.x genflags.x gencodes.x genconfig.x genpeep.x \
- cc1.x cpp.x # cc1plus
+ gcc_cc1.x gcc_cpp.x # cc1plus
 
 # Members of gnulib.
 LIBFUNCS = -eprintf -builtin-new -builtin-New -builtin-del \
@@ -201,7 +201,7 @@ CPLUS-TREE-H = $(TREE-H) cplus-tree.h c-tree.h
 # is include the system varargs.h.
 
 all: gencodes.x genconfig.x genemit.x genextract.x genflags.x genoutput.x genpeep.x genrecog.x \
-     cc1.x gcc.x cpp.x
+     gcc.x gcc_cpp.x gcc_cc1.x
 
 #lang-c: gnulib.a gcc.x cc1.x cpp.x gnulib2.a
 # lang-cplus: gnulib gcc cc1plus cpp gnulib2
@@ -222,7 +222,7 @@ g++.x: g++.o version.o $(LIBDEPS)
 # Go via `gccnew' to avoid `file busy' if $(CC) is `gcc'.
 #	mv gccnew.x gcc.x
 
-cc1.x: $(C-OBJS) $(OBJS) $(LIBDEPS) lastfile.o
+gcc_cc1.x: $(C-OBJS) $(OBJS) $(LIBDEPS) lastfile.o
 	$(CC) -o $@ lastfile.o $(C-OBJS) $(OBJS) $(LIBS)
 
 dummy.o:dummy.c
@@ -503,8 +503,8 @@ gencodes.x genconfig.x genemit.x genextract.x genflags.x genoutput.x genpeep.x g
 	$(EXTRACT_GCC142SR) GCC/$@
 
 # Making the preprocessor
-cpp.x: cccp.o cexp.o version.o trap.o $(LIBDEPS)
-	$(CC) $(BINPREFIX) -o cpp.x cccp.o cexp.o trap.o version.o $(LIBS)
+gcc_cpp.x: cccp.o cexp.o version.o trap.o $(LIBDEPS)
+	$(CC) $(BINPREFIX) -o$@ cccp.o cexp.o trap.o version.o $(LIBS)
 
 cpcpp.x: cpcccp.o cexp.o version.o $(LIBDEPS)
 	$(CC) $(BINPREFIX) -o cpcpp.x cpcccp.o cexp.o trap.o version.o $(LIBS)
