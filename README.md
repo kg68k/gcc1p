@@ -29,9 +29,11 @@ gcc version 1.30 Tool#2(X680x0)の改造版です。
 
 ### 削除された機能
 
+* .sファイルへの`RUNS_HUMAN_VERSION equ ...`の出力。
 * GVRAM、TVRAMの使用。
 * インダイレクトファイル。
 * ワイルドカード展開。
+* `-as-symbols=`オプション。
 
 
 ### 各種ファイル名

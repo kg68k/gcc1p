@@ -134,7 +134,7 @@ HUMAN68K CHANGING
 lk.x does not know that arguments starting in '-l' are library,
 then gcc.x handles '-l'.
 
-gcc handles '-x', '-o outputfile', and '-b base-address' '-as-symbols=N' lk.x's
+gcc handles '-x', '-o outputfile', and '-b base-address' lk.x's
 options. gcc handles options '-cpp-stack=N', '-cc1-stack=N' are available.
 
 */
@@ -173,7 +173,6 @@ options. gcc handles options '-cpp-stack=N', '-cc1-stack=N' are available.
 
 #ifdef __human68k__
 #define INITIAL_STACK_SIZE 128 * 1024 /* default stack size */
-#define MAX_SYMBOLS 0x7fff            /* as.x max symbols */
 
 #undef WORD_SWITCH_TAKES_ATGS
 #define WORD_SWITCH_TAKES_ARG(STR) \
@@ -194,17 +193,15 @@ static struct X68kOption {
 } x68k_option_set[] = {
     {"cpp-stack=", 10, INITIAL_STACK_SIZE},
     {"cc1-stack=", 10, INITIAL_STACK_SIZE},
-    {"as-symbols=", 11, MAX_SYMBOLS},
     {"z-heap=", 7, 0x10000},
     {"z-stack=", 8, 0x10000},
     {"exit-bell", 9, 0},
 };
 #define X68K_CPP_OPTION x68k_option_set[0]
 #define X68K_CC1_OPTION x68k_option_set[1]
-#define X68K_ASM_OPTION x68k_option_set[2]
-#define X68K_LK_OPTION0 x68k_option_set[3]
-#define X68K_LK_OPTION1 x68k_option_set[4]
-#define X68K_EXIT_BELL x68k_option_set[5]
+#define X68K_LK_OPTION0 x68k_option_set[2]
+#define X68K_LK_OPTION1 x68k_option_set[3]
+#define X68K_EXIT_BELL x68k_option_set[4]
 
 #define Myexit(VAL)                                         \
   do {                                                      \
@@ -349,16 +346,16 @@ struct compiler compilers[] = {
  %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}\
  %{!S:%{!ffppp:-o %g.s}%{ffppp:-o %g.ss}}}}} |\n\
  %{!M*:%{!E:%{!S:%{ffppp:fppp -o %g.s %g.ss}}}} |\n\
- %{!M*:%{!E:%{!S:" ASSEMBLER " %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s\
+ %{!M*:%{!E:%{!S:" ASSEMBLER " %a %{SX: -r} %g.s\
  %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n}}}"},
     {".i",
      "gcc_cc1 %{cc1-stack=*:-+-s:%X1} %{!cc1-stack=*:-+-s:%X1}\
 %i %1 %{!Q:-quiet} %{Y*} %{d*} %{m*} %{f*} %{a}\
 %{g} %{O*} %{W*} %{w} %{p} %{pedantic} %{ansi} %{traditional}\
 %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}%{!S:-o %g.s} |\n\
-%{!S:" ASSEMBLER " %a %{SX: -r} %{as-symbols=*:/m %XS} %g.s %{c:%{o*}%{!o*:-o "
+%{!S:" ASSEMBLER " %a %{SX: -r} %g.s %{c:%{o*}%{!o*:-o "
      "%w%b.o}}%{!c:-o %d%w%b.o}\n }"},
-    {".s", "%{!S:" ASSEMBLER " %a %{SX: -r} %{as-symbols=*:/m %XS} %i "
+    {".s", "%{!S:" ASSEMBLER " %a %{SX: -r} %i "
            "%{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
     /* Mark end of table */
     {0, 0}};
@@ -1621,8 +1618,6 @@ int inswitch;
               sprintf(xbuf, "%x", X68K_LK_OPTION0.value);
             else if (*p == 'T')
               sprintf(xbuf, "%x", X68K_LK_OPTION1.value);
-            else
-              sprintf(xbuf, "%d", X68K_ASM_OPTION.value);
             p++;
             obstack_grow(&obstack, xbuf, strlen(xbuf));
             arg_going = 1;
