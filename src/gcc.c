@@ -338,7 +338,7 @@ struct compiler compilers[] = {
      "gcc_cpp %{cpp-stack=*:-+-s:%XP} %{!cpp-stack=*:-+-s:%XP}\
  %{nostdinc} %{C} %{v} %{D*} %{U*} %{I*} %{M*} %{T} %{trigraphs} -undef\
  -D__GNUC__ %{ansi:-trigraphs -$ -D__STRICT_ANSI__} %{!ansi:%p} %P\
- %c %{O*:-D__OPTIMIZE__} %{traditional} %{pedantic} %{m68881:-D__HAVE68881__}\
+ %c %{O*:%{!O0:-D__OPTIMIZE__}} %{traditional} %{pedantic} %{m68881:-D__HAVE68881__}\
  %{mregparm:-D__MREGPARM__} %{mshort:-D__MSHORT__} %{m68020:-D__MC68020__}\
  %{m68040:-D__MC68040__}\
  %{Wcomment} %{Wtrigraphs} %{Wall} %C %{fundump*} %{SX: -DSX_GCC -D__SX_GCC__}\
@@ -1165,6 +1165,7 @@ char **argv;
   register int i;
 #ifdef __human68k__
   int lib_spec = 1;
+  struct switchstr *swOptimize = NULL;
 #endif
   n_switches = 0;
   n_infiles = 0;
@@ -1267,6 +1268,13 @@ char **argv;
           *x++ = ' ';
         }
         sprintf(x, "%%{l%s:lib%s.a%%s}", p + 1, p + 1);
+      } else if (c == 'O') {
+        if (swOptimize == NULL) {
+          swOptimize = &switches[n_switches];
+        } else {
+          swOptimize->part1 = p;
+          continue;
+        }
       }
 #else
       if (c == 'B' || c == 'b') continue;
