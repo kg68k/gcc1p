@@ -1005,9 +1005,6 @@ int execute() {
   ((c) == 'o' || (c) == 'm' || (c) == 'b' || (c) == 'i' || (c) == 't')
     for (p = s = commands[i].argv[0]; *s; s++)
       if (*s == '/' || *s == '\\') {
-#ifdef SLASH_CONV
-        *s = '\\';
-#endif
         p = s + 1;
       }
     if (strcmp(p, "gcc_cc1") == 0 || strcmp(p, "gcc_cpp") == 0)
@@ -2305,22 +2302,11 @@ char *p;
         if ((y = *(s + x - 1)) == '/' || y == '\\') t++;
         x += strlen(t);
         p = (char *)xmalloc(x + 1);
-#ifdef SLASH_CONV
-        for (c = p; x = *s++;) *c++ = (x == '/') ? '\\' : x;
-        while (x = *t++) *c++ = (x == '/') ? '\\' : x;
-        *c = 0;
-        return p;
-#else
         return strcat(strcpy(p, s), t);
-#endif
       }
     }
   }
-#ifdef SLASH_CONV
-  for (; *p != '\\'; p++);
-#else
   for (; *p != '\\' && *p != '/'; p++);
-#endif
   return ++p;
 }
 #endif

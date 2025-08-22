@@ -642,9 +642,9 @@ char **argv;
         env++;
       }
     trap_14 = (void *)_dos_intvcg(0x2e);
-    _dos_intvcs(0x2e, (void*)trap14);
-    _dos_intvcs(0xfff2, (void*)abort);
-    _dos_intvcs(0xfff1, (void*)abort);
+    _dos_intvcs(0x2e, (void *)trap14);
+    _dos_intvcs(0xfff2, (void *)abort);
+    _dos_intvcs(0xfff1, (void *)abort);
     human68k_setpath(include_defaults);
     human68k_setpath(cplusplus_include_defaults);
   }
@@ -2647,9 +2647,6 @@ get_filename:
       while (fend != limit && *fend != '\"')
 #ifdef __human68k__
       {
-#ifdef SLASH_CONV
-        if (*fend == '/') *fend = '\\';
-#endif
         fend++;
       }
 #else
@@ -2710,9 +2707,6 @@ get_filename:
       fend = fbeg;
 #ifdef __human68k__
       while (fend != limit && *fend != '>') {
-#ifdef SLASH_CONV
-        if (*fend == '/') *fend = '\\';
-#endif
         fend++;
       }
 #else
@@ -5875,12 +5869,7 @@ void human68k_setpath(d) register struct file_name_list *d;
     if (*d->fname == '$')
       if (s = human68k_getenv(d->fname + 1)) {
         x = (unsigned char *)(d->fname = xmalloc(strlen(s) + 1));
-        while (c = *s++)
-#ifdef SLASH_CONV
-          *x++ = (c == '/') ? '\\' : c;
-#else
-          *x++ = c;
-#endif
+        while (c = *s++) *x++ = c;
         *x = 0;
       } else
         d->fname = "";
