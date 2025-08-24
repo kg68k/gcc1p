@@ -44,6 +44,10 @@ TMPDIR = $(temp)
 AS-INCLUDE = $(include)
 XSHELL=ksh
 
+# gcc_cpp.x and gcc_cc1.x default stack size
+INITIAL_STACK_SIZE = 131072
+LDFLAGS = -z-stack=$(INITIAL_STACK_SIZE)
+
 # on sysV, define this as cp.
 INSTALL = install -c
 
@@ -223,7 +227,7 @@ g++.x: g++.o version.o $(LIBDEPS)
 #	mv gccnew.x gcc.x
 
 gcc_cc1.x: $(C-OBJS) $(OBJS) $(LIBDEPS) lastfile.o
-	$(CC) -o $@ lastfile.o $(C-OBJS) $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -o $@ lastfile.o $(C-OBJS) $(OBJS) $(LIBS)
 
 dummy.o:dummy.c
 
@@ -504,7 +508,7 @@ gencodes.x genconfig.x genemit.x genextract.x genflags.x genoutput.x genpeep.x g
 
 # Making the preprocessor
 gcc_cpp.x: cccp.o cexp.o version.o trap.o $(LIBDEPS)
-	$(CC) $(BINPREFIX) -o$@ cccp.o cexp.o trap.o version.o $(LIBS)
+	$(CC) $(LDFLAGS) $(BINPREFIX) -o$@ cccp.o cexp.o trap.o version.o $(LIBS)
 
 cpcpp.x: cpcccp.o cexp.o version.o $(LIBDEPS)
 	$(CC) $(BINPREFIX) -o cpcpp.x cpcccp.o cexp.o trap.o version.o $(LIBS)

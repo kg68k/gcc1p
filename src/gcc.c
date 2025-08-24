@@ -129,7 +129,8 @@ HUMAN68K CHANGING
  %I   substitute include path from environt variable.
  %X1  substitute cc1 stack size
  %XP  substitute cpp stack size
- %XS  substitute as.x symbol size
+ %XH  substitute target heap size
+ %XT  substitute target stack size
 
 lk.x does not know that arguments starting in '-l' are library,
 then gcc.x handles '-l'.
@@ -172,7 +173,6 @@ options. gcc handles options '-cpp-stack=N', '-cc1-stack=N' are available.
 #endif /* USG */
 
 #ifdef __human68k__
-#define INITIAL_STACK_SIZE 128 * 1024 /* default stack size */
 
 #undef WORD_SWITCH_TAKES_ATGS
 #define WORD_SWITCH_TAKES_ARG(STR) \
@@ -187,20 +187,20 @@ static char *human68k_pathinit();
 static short redo_flag;
 
 static struct X68kOption {
-  char *option;
+  const char *option;
   int length;
   int value;
 } x68k_option_set[] = {
-    {"cpp-stack=", 10, INITIAL_STACK_SIZE},
-    {"cc1-stack=", 10, INITIAL_STACK_SIZE},
-    {"z-heap=", 7, 0x10000},
-    {"z-stack=", 8, 0x10000},
+    {"cpp-stack=", 10, 0},  //
+    {"cc1-stack=", 10, 0},  //
+    {"z-heap=", 7, 0},      //
+    {"z-stack=", 8, 0},     //
     {"exit-bell", 9, 0},
 };
-#define X68K_CPP_OPTION x68k_option_set[0]
-#define X68K_CC1_OPTION x68k_option_set[1]
-#define X68K_LK_OPTION0 x68k_option_set[2]
-#define X68K_LK_OPTION1 x68k_option_set[3]
+#define X68K_CPP_STACK x68k_option_set[0]
+#define X68K_CC1_STACK x68k_option_set[1]
+#define X68K_Z_HEAP x68k_option_set[2]
+#define X68K_Z_STACK x68k_option_set[3]
 #define X68K_EXIT_BELL x68k_option_set[4]
 
 #define Myexit(VAL)                                         \
@@ -332,30 +332,30 @@ struct compiler {
 
 struct compiler compilers[] = {
     {".c",
-     "gcc_cpp %{cpp-stack=*:-+-s:%XP} %{!cpp-stack=*:-+-s:%XP}\
+     "gcc_cpp %{cpp-stack=*:%XP}\
  %{nostdinc} %{C} %{v} %{D*} %{U*} %{I*} %{M*} %{T} %{trigraphs} -undef\
  -D__GNUC__ %{ansi:-trigraphs -$ -D__STRICT_ANSI__} %{!ansi:%p} %P\
  %c %{O*:%{!O0:-D__OPTIMIZE__}} %{traditional} %{pedantic} %{m68881:-D__HAVE68881__}\
- %{mregparm:-D__MREGPARM__} %{mshort:-D__MSHORT__} %{m68020:-D__MC68020__}\
- %{m68040:-D__MC68040__}\
- %{Wcomment} %{Wtrigraphs} %{Wall} %C %{fundump*} %{SX: -DSX_GCC -D__SX_GCC__}\
- %i %{!M*:%{!E:%{!C:%g.cpp}}}%{C:%{o*}}%{E:%{o*}}%{M*:%{o*}} |\n\
- %{!M*:%{!E:%{!C:gcc_cc1 %{cc1-stack=*:-+-s:%X1} %{!cc1-stack=*:-+-s:%X1}\
+ %{mregparm:-D__MREGPARM__} %{mshort:-D__MSHORT__} %{m68020:-D__MC68020__} %{m68040:-D__MC68040__}\
+ %{Wcomment} %{Wtrigraphs} %{Wall} %C %{fundump*} %{SX:-DSX_GCC -D__SX_GCC__}\
+ %i %{!M*:%{!E:%{!C:%g.cpp}}}%{C:%{o*}}%{E:%{o*}}%{M*:%{o*}}\
+ |\n\
+ %{!M*:%{!E:%{!C:gcc_cc1 %{cc1-stack=*:%X1}\
  %g.cpp %1 %{!Q:-quiet} -dumpbase %i %{Y*} %{d*} %{m*} %{f*} %{a}\
  %{g} %{O*} %{W*} %{w} %{p} %{pedantic} %{ansi} %{traditional} %{!SX:-fhuman}\
  %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}\
  %{!S:%{!ffppp:-o %g.s}%{ffppp:-o %g.ss}}}}} |\n\
  %{!M*:%{!E:%{!S:%{ffppp:fppp -o %g.s %g.ss}}}} |\n\
- %{!M*:%{!E:%{!S:" ASSEMBLER " %a %{SX: -r} %g.s\
+ %{!M*:%{!E:%{!S:" ASSEMBLER " %a %{SX:-r} %g.s\
  %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n}}}"},
     {".i",
-     "gcc_cc1 %{cc1-stack=*:-+-s:%X1} %{!cc1-stack=*:-+-s:%X1}\
+     "gcc_cc1 %{cc1-stack=*:-+-s:%X1}\
 %i %1 %{!Q:-quiet} %{Y*} %{d*} %{m*} %{f*} %{a}\
 %{g} %{O*} %{W*} %{w} %{p} %{pedantic} %{ansi} %{traditional}\
 %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}%{!S:-o %g.s} |\n\
-%{!S:" ASSEMBLER " %a %{SX: -r} %g.s %{c:%{o*}%{!o*:-o "
+%{!S:" ASSEMBLER " %a %{SX:-r} %g.s %{c:%{o*}%{!o*:-o "
      "%w%b.o}}%{!c:-o %d%w%b.o}\n }"},
-    {".s", "%{!S:" ASSEMBLER " %a %{SX: -r} %i "
+    {".s", "%{!S:" ASSEMBLER " %a %{SX:-r} %i "
            "%{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
     /* Mark end of table */
     {0, 0}};
@@ -420,7 +420,7 @@ char *HUMAN68K_LIB_SPEC;
 char *link_spec;
 char *hu_lk1 = "%{!c:%{!M*:%{!E:%{!S:%{!C:";
 char *hu_lk3 =
-    " %{z-heap=*:-d_HEAP_SIZE=%XH} %{z-stack=*:-d_STACK_SIZE=%XT}\
+    " %{z-heap=*:%XH} %{z-stack=*:%XT}\
  %{v} %{s:-x} %{x} %{b*} %{o*} %o %L\
  %{SX:-s %{!nostdlib:lib_sx.a%s libgnu.a%s }}\
  %{!SX:%{p:libprof.a%s} %{!nostdlib:libc.a%s libgnu.a%s}\n }}}}}}";
@@ -1354,6 +1354,39 @@ char *spec;
   return value;
 }
 
+#ifdef __human68k__
+static void process_x68k_option(char c) {
+  char buf[32] = {0};
+
+  switch (c) {
+    default:
+      return;
+
+    case '1':  // %X1 ... gcc_cc1.x stack size (-cc1-stack=*)
+      if (X68K_CC1_STACK.value <= 0) return;
+      snprintf(buf, sizeof(buf), "-+-s:%d", X68K_CC1_STACK.value);
+      break;
+
+    case 'P':  // %XP ... gcc_cpp.x stack size (-cpp-stack=*)
+      if (X68K_CPP_STACK.value <= 0) return;
+      snprintf(buf, sizeof(buf), "-+-s:%d", X68K_CPP_STACK.value);
+      break;
+
+    case 'H':  // %XH ... target heap size (-z-heap=*)
+      if (X68K_Z_HEAP.value <= 0) return;
+      snprintf(buf, sizeof(buf), "-d_HEAP_SIZE=%x", X68K_Z_HEAP.value);
+      break;
+
+    case 'T':  // %XT ... target stack size (-z-stack=*)
+      if (X68K_Z_STACK.value <= 0) return;
+      snprintf(buf, sizeof(buf), "-d_STACK_SIZE=%x", X68K_Z_STACK.value);
+      break;
+  }
+
+  obstack_grow(&obstack, buf, strlen(buf));
+}
+#endif
+
 /* Process the sub-spec SPEC as a portion of a larger spec.
    This is like processing a whole spec except that we do
    not initialize at the beginning and we do not supply a
@@ -1605,21 +1638,10 @@ int inswitch;
             }
           } break;
 
-          case 'X': {
-            char xbuf[16];
-            if (*p == '1')
-              sprintf(xbuf, "%d", X68K_CC1_OPTION.value);
-            else if (*p == 'P')
-              sprintf(xbuf, "%d", X68K_CPP_OPTION.value);
-            else if (*p == 'H')
-              sprintf(xbuf, "%x", X68K_LK_OPTION0.value);
-            else if (*p == 'T')
-              sprintf(xbuf, "%x", X68K_LK_OPTION1.value);
-            p++;
-            obstack_grow(&obstack, xbuf, strlen(xbuf));
+          case 'X':
+            if (*p) process_x68k_option(*p++);
             arg_going = 1;
-          } break;
-
+            break;
 #endif
 
           default:
