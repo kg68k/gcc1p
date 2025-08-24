@@ -7,6 +7,7 @@
 * X680x0版独自オプションの解析処理をリファクタリング。
 * Makefileで作成する実行ファイル名をcpp.x、cc1.xからgcc_cpp.x、gcc_cc1.xに変更。
 * `-{cpp,cc1}-stack=*`オプションが無指定ならgcc_{cpp,cc1}.x実行時に`-+-s:`を指定しないようにした。
+* gcc_cpp.x、gcc_cc1.xの規定のスタックサイズを192KiBに変更。
 
 
 ## patchlevel 8 (2025-03-08)

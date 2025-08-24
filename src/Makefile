@@ -44,9 +44,14 @@ TMPDIR = $(temp)
 AS-INCLUDE = $(include)
 XSHELL=ksh
 
+# gcc.x default heap and stack size
+# do not use -z-heap= and -z-stack= option, because gcc2 outputs it in decimal.
+GCCX_LDFLAGS = -Wl,-d_HEAP_SIZE=4000 -Wl,-d_STACK_SIZE=8000
+
 # gcc_cpp.x and gcc_cc1.x default stack size
-INITIAL_STACK_SIZE = 131072
-LDFLAGS = -z-stack=$(INITIAL_STACK_SIZE)
+# do not use -z-heap= and -z-stack= option, because gcc2 outputs it in decimal.
+STACK_SIZE_IN_HEX = 30000
+LDFLAGS = -Wl,-d_STACK_SIZE=$(STACK_SIZE_IN_HEX)
 
 # on sysV, define this as cp.
 INSTALL = install -c
@@ -218,7 +223,7 @@ asmcmp.x: asmcmp.c
 	$(CC) $(CFLAGS) -o$@ $^
 
 gcc.x: gcc.o version.o trapgcc.o $(LIBDEPS)
-	$(CC) $(BINPREFIX) -z-heap=16384 -z-stack=32768 -o $@ gcc.o trapgcc.o version.o $(LIBS)
+	$(CC) $(BINPREFIX) $(GCCX_LDFLAGS) -o$@ gcc.o trapgcc.o version.o $(LIBS)
 
 g++.x: g++.o version.o $(LIBDEPS)
 	$(CC) $(BINPREFIX) -o g++.x g++.o version.o $(LIBS)
@@ -508,7 +513,7 @@ gencodes.x genconfig.x genemit.x genextract.x genflags.x genoutput.x genpeep.x g
 
 # Making the preprocessor
 gcc_cpp.x: cccp.o cexp.o version.o trap.o $(LIBDEPS)
-	$(CC) $(LDFLAGS) $(BINPREFIX) -o$@ cccp.o cexp.o trap.o version.o $(LIBS)
+	$(CC) $(BINPREFIX) $(LDFLAGS) -o$@ cccp.o cexp.o trap.o version.o $(LIBS)
 
 cpcpp.x: cpcccp.o cexp.o version.o $(LIBDEPS)
 	$(CC) $(BINPREFIX) -o cpcpp.x cpcccp.o cexp.o trap.o version.o $(LIBS)
