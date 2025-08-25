@@ -346,16 +346,16 @@ struct compiler compilers[] = {
  %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}\
  %{!S:%{!ffppp:-o %g.s}%{ffppp:-o %g.ss}}}}} |\n\
  %{!M*:%{!E:%{!S:%{ffppp:fppp -o %g.s %g.ss}}}} |\n\
- %{!M*:%{!E:%{!S:" ASSEMBLER " %a %{SX:-r} %g.s\
+ %{!M*:%{!E:%{!S:" ASSEMBLER " %a %g.s\
  %{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n}}}"},
     {".i",
      "gcc_cc1 %{cc1-stack=*:-+-s:%X1}\
 %i %1 %{!Q:-quiet} %{Y*} %{d*} %{m*} %{f*} %{a}\
 %{g} %{O*} %{W*} %{w} %{p} %{pedantic} %{ansi} %{traditional}\
 %{v:-version} %{S:%{o*}%{!o*:-o %b.s}}%{!S:-o %g.s} |\n\
-%{!S:" ASSEMBLER " %a %{SX:-r} %g.s %{c:%{o*}%{!o*:-o "
+%{!S:" ASSEMBLER " %a %g.s %{c:%{o*}%{!o*:-o "
      "%w%b.o}}%{!c:-o %d%w%b.o}\n }"},
-    {".s", "%{!S:" ASSEMBLER " %a %{SX:-r} %i "
+    {".s", "%{!S:" ASSEMBLER " %a %i "
            "%{c:%{o*}%{!o*:-o %w%b.o}}%{!c:-o %d%w%b.o}\n }"},
     /* Mark end of table */
     {0, 0}};
